@@ -1,481 +1,1318 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Apollo Gateway 使用文档</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#0f1117;--card:#1a1d27;--border:#2a2d3e;--accent:#7c6af7;
-  --accent2:#5eead4;--text:#e2e8f0;--muted:#8892a4;--code:#1e2130;
-  --success:#22c55e;--warn:#f59e0b;
-}
-body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.6;min-height:100vh}
-a{color:var(--accent);text-decoration:none}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Apollo Gateway 使用文档</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --bg: #0f1117;
+        --card: #1a1d27;
+        --border: #2a2d3e;
+        --accent: #7c6af7;
+        --accent2: #5eead4;
+        --text: #e2e8f0;
+        --muted: #8892a4;
+        --code: #1e2130;
+        --success: #22c55e;
+        --warn: #f59e0b;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.6;
+        min-height: 100vh;
+      }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
 
-/* Header */
-.header{background:linear-gradient(135deg,#1a1d27 0%,#0f1117 100%);border-bottom:1px solid var(--border);padding:20px 16px;text-align:center}
-.header h1{font-size:clamp(18px,4vw,26px);font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.header p{color:var(--muted);font-size:13px;margin-top:4px}
-.badge{display:inline-block;background:rgba(124,106,247,.15);border:1px solid rgba(124,106,247,.3);color:var(--accent);padding:2px 8px;border-radius:20px;font-size:11px;margin-top:6px}
+      /* Header */
+      .header {
+        background: linear-gradient(135deg, #1a1d27 0%, #0f1117 100%);
+        border-bottom: 1px solid var(--border);
+        padding: 20px 16px;
+        text-align: center;
+      }
+      .header h1 {
+        font-size: clamp(18px, 4vw, 26px);
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .header p {
+        color: var(--muted);
+        font-size: 13px;
+        margin-top: 4px;
+      }
+      .badge {
+        display: inline-block;
+        background: rgba(124, 106, 247, 0.15);
+        border: 1px solid rgba(124, 106, 247, 0.3);
+        color: var(--accent);
+        padding: 2px 8px;
+        border-radius: 20px;
+        font-size: 11px;
+        margin-top: 6px;
+      }
 
-/* Nav Tabs */
-.nav-wrap{background:var(--card);border-bottom:1px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-.nav-wrap::-webkit-scrollbar{display:none}
-.nav{display:flex;min-width:max-content;padding:0 12px}
-.nav-btn{padding:14px 18px;font-size:14px;font-weight:500;color:var(--muted);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;display:flex;align-items:center;gap:6px}
-.nav-btn:hover{color:var(--text)}
-.nav-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
-.nav-btn .icon{font-size:16px}
+      /* Nav Tabs */
+      .nav-wrap {
+        background: var(--card);
+        border-bottom: 1px solid var(--border);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .nav-wrap::-webkit-scrollbar {
+        display: none;
+      }
+      .nav {
+        display: flex;
+        min-width: max-content;
+        padding: 0 12px;
+      }
+      .nav-btn {
+        padding: 14px 18px;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--muted);
+        border: none;
+        background: none;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        white-space: nowrap;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .nav-btn:hover {
+        color: var(--text);
+      }
+      .nav-btn.active {
+        color: var(--accent);
+        border-bottom-color: var(--accent);
+      }
+      .nav-btn .icon {
+        font-size: 16px;
+      }
 
-/* Content */
-.container{max-width:900px;margin:0 auto;padding:20px 16px}
-.tab-content{display:none}
-.tab-content.active{display:block}
+      /* Content */
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px 16px;
+      }
+      .tab-content {
+        display: none;
+      }
+      .tab-content.active {
+        display: block;
+      }
 
-/* Cards */
-.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px}
-.card-title{font-size:16px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.card-title .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0}
+      /* Cards */
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 16px;
+      }
+      .card-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .card-title .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--accent);
+        flex-shrink: 0;
+      }
 
-/* Steps */
-.steps{counter-reset:step}
-.step{display:flex;gap:14px;margin-bottom:20px;position:relative}
-.step:not(:last-child)::after{content:'';position:absolute;left:17px;top:38px;bottom:-10px;width:2px;background:var(--border)}
-.step-num{width:34px;height:34px;border-radius:50%;background:rgba(124,106,247,.15);border:2px solid var(--accent);color:var(--accent);font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.step-body{flex:1;padding-top:6px}
-.step-title{font-weight:600;margin-bottom:6px;font-size:15px}
-.step-desc{color:var(--muted);font-size:14px;line-height:1.7}
+      /* Steps */
+      .steps {
+        counter-reset: step;
+      }
+      .step {
+        display: flex;
+        gap: 14px;
+        margin-bottom: 20px;
+        position: relative;
+      }
+      .step:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        left: 17px;
+        top: 38px;
+        bottom: -10px;
+        width: 2px;
+        background: var(--border);
+      }
+      .step-num {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: rgba(124, 106, 247, 0.15);
+        border: 2px solid var(--accent);
+        color: var(--accent);
+        font-weight: 700;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .step-body {
+        flex: 1;
+        padding-top: 6px;
+      }
+      .step-title {
+        font-weight: 600;
+        margin-bottom: 6px;
+        font-size: 15px;
+      }
+      .step-desc {
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.7;
+      }
 
-/* Code blocks */
-.code-wrap{position:relative;margin:10px 0}
-.code-label{font-size:11px;color:var(--muted);background:var(--border);padding:4px 10px;border-radius:6px 6px 0 0;display:inline-block}
-pre{background:var(--code);border:1px solid var(--border);border-radius:0 8px 8px 8px;padding:14px 16px;overflow-x:auto;font-size:13px;line-height:1.7;-webkit-overflow-scrolling:touch}
-pre code{font-family:'Fira Code','Cascadia Code',Consolas,monospace;color:#c9d1d9}
-.copy-btn{position:absolute;top:30px;right:8px;background:var(--border);border:none;color:var(--muted);padding:4px 10px;border-radius:6px;font-size:12px;cursor:pointer;transition:all .2s}
-.copy-btn:hover{background:var(--accent);color:#fff}
-.copy-btn.copied{background:var(--success);color:#fff}
+      /* Code blocks */
+      .code-wrap {
+        position: relative;
+        margin: 10px 0;
+      }
+      .code-label {
+        font-size: 11px;
+        color: var(--muted);
+        background: var(--border);
+        padding: 4px 10px;
+        border-radius: 6px 6px 0 0;
+        display: inline-block;
+      }
+      pre {
+        background: var(--code);
+        border: 1px solid var(--border);
+        border-radius: 0 8px 8px 8px;
+        padding: 14px 16px;
+        overflow-x: auto;
+        font-size: 13px;
+        line-height: 1.7;
+        -webkit-overflow-scrolling: touch;
+      }
+      pre code {
+        font-family: "Fira Code", "Cascadia Code", Consolas, monospace;
+        color: #c9d1d9;
+      }
+      .copy-btn {
+        position: absolute;
+        top: 30px;
+        right: 8px;
+        background: var(--border);
+        border: none;
+        color: var(--muted);
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .copy-btn:hover {
+        background: var(--accent);
+        color: #fff;
+      }
+      .copy-btn.copied {
+        background: var(--success);
+        color: #fff;
+      }
 
-/* Inline code */
-code{background:var(--code);border:1px solid var(--border);padding:1px 6px;border-radius:4px;font-size:13px;font-family:'Fira Code',Consolas,monospace;color:var(--accent2)}
+      /* Inline code */
+      code {
+        background: var(--code);
+        border: 1px solid var(--border);
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 13px;
+        font-family: "Fira Code", Consolas, monospace;
+        color: var(--accent2);
+      }
 
-/* Table */
-.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:10px 0}
-table{width:100%;border-collapse:collapse;font-size:14px;min-width:400px}
-th{background:rgba(124,106,247,.1);color:var(--accent);padding:10px 14px;text-align:left;border-bottom:2px solid var(--border);white-space:nowrap}
-td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text)}
-tr:hover td{background:rgba(255,255,255,.02)}
+      /* Table */
+      .table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 10px 0;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+        min-width: 400px;
+      }
+      th {
+        background: rgba(124, 106, 247, 0.1);
+        color: var(--accent);
+        padding: 10px 14px;
+        text-align: left;
+        border-bottom: 2px solid var(--border);
+        white-space: nowrap;
+      }
+      td {
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--border);
+        color: var(--text);
+      }
+      tr:hover td {
+        background: rgba(255, 255, 255, 0.02);
+      }
 
-/* Alert */
-.alert{border-radius:8px;padding:12px 16px;margin:12px 0;font-size:14px;display:flex;gap:10px;align-items:flex-start}
-.alert-warn{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:#fcd34d}
-.alert-info{background:rgba(94,234,212,.1);border:1px solid rgba(94,234,212,.3);color:var(--accent2)}
-.alert-success{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:#86efac}
-.alert-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+      /* Alert */
+      .alert {
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin: 12px 0;
+        font-size: 14px;
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+      }
+      .alert-warn {
+        background: rgba(245, 158, 11, 0.1);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        color: #fcd34d;
+      }
+      .alert-info {
+        background: rgba(94, 234, 212, 0.1);
+        border: 1px solid rgba(94, 234, 212, 0.3);
+        color: var(--accent2);
+      }
+      .alert-success {
+        background: rgba(34, 197, 94, 0.1);
+        border: 1px solid rgba(34, 197, 94, 0.3);
+        color: #86efac;
+      }
+      .alert-icon {
+        font-size: 16px;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
 
-/* Tags */
-.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:500}
-.tag-get{background:rgba(34,197,94,.15);color:#86efac;border:1px solid rgba(34,197,94,.3)}
-.tag-post{background:rgba(124,106,247,.15);color:#a78bfa;border:1px solid rgba(124,106,247,.3)}
-.tag-req{background:rgba(239,68,68,.15);color:#fca5a5;border:1px solid rgba(239,68,68,.3)}
-.tag-opt{background:rgba(148,163,184,.1);color:var(--muted);border:1px solid var(--border)}
+      /* Tags */
+      .tag {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+      .tag-get {
+        background: rgba(34, 197, 94, 0.15);
+        color: #86efac;
+        border: 1px solid rgba(34, 197, 94, 0.3);
+      }
+      .tag-post {
+        background: rgba(124, 106, 247, 0.15);
+        color: #a78bfa;
+        border: 1px solid rgba(124, 106, 247, 0.3);
+      }
+      .tag-req {
+        background: rgba(239, 68, 68, 0.15);
+        color: #fca5a5;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+      }
+      .tag-opt {
+        background: rgba(148, 163, 184, 0.1);
+        color: var(--muted);
+        border: 1px solid var(--border);
+      }
 
-/* Model grid */
-.model-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:10px}
-.model-card{background:var(--code);border:1px solid var(--border);border-radius:8px;padding:12px;transition:border-color .2s}
-.model-card:hover{border-color:var(--accent)}
-.model-name{font-family:Consolas,monospace;font-size:13px;color:var(--accent2);font-weight:600}
-.model-alias{font-size:12px;color:var(--muted);margin-top:4px}
-.model-price{font-size:12px;color:var(--warn);margin-top:6px}
+      /* Model grid */
+      .model-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .model-card {
+        background: var(--code);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 12px;
+        transition: border-color 0.2s;
+      }
+      .model-card:hover {
+        border-color: var(--accent);
+      }
+      .model-name {
+        font-family: Consolas, monospace;
+        font-size: 13px;
+        color: var(--accent2);
+        font-weight: 600;
+      }
+      .model-alias {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+      .model-price {
+        font-size: 12px;
+        color: var(--warn);
+        margin-top: 6px;
+      }
 
-/* Pricing */
-.price-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-top:12px}
-.price-card{background:var(--code);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center}
-.price-tier{font-size:15px;font-weight:700;margin-bottom:4px}
-.price-model{font-size:12px;color:var(--muted);margin-bottom:10px}
-.price-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-top:1px solid var(--border)}
-.price-label{color:var(--muted)}
-.price-val{color:var(--accent2);font-weight:600}
+      /* Pricing */
+      .price-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 12px;
+        margin-top: 12px;
+      }
+      .price-card {
+        background: var(--code);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 16px;
+        text-align: center;
+      }
+      .price-tier {
+        font-size: 15px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .price-model {
+        font-size: 12px;
+        color: var(--muted);
+        margin-bottom: 10px;
+      }
+      .price-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        padding: 4px 0;
+        border-top: 1px solid var(--border);
+      }
+      .price-label {
+        color: var(--muted);
+      }
+      .price-val {
+        color: var(--accent2);
+        font-weight: 600;
+      }
 
-/* Sub tabs */
-.sub-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
-.sub-tab{padding:6px 14px;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:none;color:var(--muted);transition:all .2s}
-.sub-tab:hover{border-color:var(--accent);color:var(--accent)}
-.sub-tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
-.sub-panel{display:none}
-.sub-panel.active{display:block}
+      /* Sub tabs */
+      .sub-tabs {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+      }
+      .sub-tab {
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        border: 1px solid var(--border);
+        background: none;
+        color: var(--muted);
+        transition: all 0.2s;
+      }
+      .sub-tab:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .sub-tab.active {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+      }
+      .sub-panel {
+        display: none;
+      }
+      .sub-panel.active {
+        display: block;
+      }
 
-/* Endpoint header */
-.endpoint{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
-.endpoint-path{font-family:Consolas,monospace;font-size:15px;font-weight:600;color:var(--text)}
+      /* Endpoint header */
+      .endpoint {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+      }
+      .endpoint-path {
+        font-family: Consolas, monospace;
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--text);
+      }
 
-/* Divider */
-.divider{border:none;border-top:1px solid var(--border);margin:20px 0}
+      /* Divider */
+      .divider {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 20px 0;
+      }
 
-/* Modal */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:999;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px)}
-.modal-overlay.hidden{display:none}
-.modal{background:var(--card);border:1px solid var(--border);border-radius:16px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.modal-header{padding:24px 24px 0;text-align:center}
-.modal-logo{width:80px;height:80px;border-radius:16px;object-fit:cover;margin-bottom:12px}
-.modal-title{font-size:22px;font-weight:700;background:linear-gradient(135deg,#f97316,#ef4444);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.modal-sub{color:var(--muted);font-size:13px;margin-top:4px}
-.modal-body{padding:20px 24px}
-.modal-section{margin-bottom:18px}
-.modal-section-title{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
-.price-row-modal{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--code);border-radius:8px;margin-bottom:6px}
-.price-cny{font-size:18px;font-weight:700;color:var(--text)}
-.price-usd{font-size:15px;color:var(--accent2);font-weight:600}
-.price-note{font-size:11px;color:var(--warn);background:rgba(245,158,11,.15);padding:2px 8px;border-radius:10px}
-.ide-tags{display:flex;flex-wrap:wrap;gap:8px}
-.ide-tag{padding:6px 14px;background:rgba(124,106,247,.1);border:1px solid rgba(124,106,247,.25);border-radius:20px;font-size:13px;color:var(--accent)}
-.modal-qr{text-align:center;padding:4px 0}
-.modal-qr img{width:140px;height:140px;border-radius:12px;border:2px solid var(--border)}
-.modal-qr a{display:block;margin-top:8px;font-size:13px;color:var(--accent)}
-.modal-footer{padding:0 24px 24px;display:flex;gap:10px}
-.btn-primary{flex:1;padding:12px;background:linear-gradient(135deg,#f97316,#ef4444);border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;transition:opacity .2s}
-.btn-primary:hover{opacity:.9}
-.btn-ghost{padding:12px 16px;background:none;border:1px solid var(--border);border-radius:10px;color:var(--muted);font-size:14px;cursor:pointer;transition:all .2s;white-space:nowrap}
-.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+      /* Modal */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.75);
+        z-index: 999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        backdrop-filter: blur(4px);
+      }
+      .modal-overlay.hidden {
+        display: none;
+      }
+      .modal {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        max-width: 520px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .modal-header {
+        padding: 24px 24px 0;
+        text-align: center;
+      }
+      .modal-logo {
+        width: 80px;
+        height: 80px;
+        border-radius: 16px;
+        object-fit: cover;
+        margin-bottom: 12px;
+      }
+      .modal-title {
+        font-size: 22px;
+        font-weight: 700;
+        background: linear-gradient(135deg, #f97316, #ef4444);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .modal-sub {
+        color: var(--muted);
+        font-size: 13px;
+        margin-top: 4px;
+      }
+      .modal-body {
+        padding: 20px 24px;
+      }
+      .modal-section {
+        margin-bottom: 18px;
+      }
+      .modal-section-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 10px;
+      }
+      .price-row-modal {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 14px;
+        background: var(--code);
+        border-radius: 8px;
+        margin-bottom: 6px;
+      }
+      .price-cny {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .price-usd {
+        font-size: 15px;
+        color: var(--accent2);
+        font-weight: 600;
+      }
+      .price-note {
+        font-size: 11px;
+        color: var(--warn);
+        background: rgba(245, 158, 11, 0.15);
+        padding: 2px 8px;
+        border-radius: 10px;
+      }
+      .ide-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .ide-tag {
+        padding: 6px 14px;
+        background: rgba(124, 106, 247, 0.1);
+        border: 1px solid rgba(124, 106, 247, 0.25);
+        border-radius: 20px;
+        font-size: 13px;
+        color: var(--accent);
+      }
+      .modal-qr {
+        text-align: center;
+        padding: 4px 0;
+      }
+      .modal-qr img {
+        width: 140px;
+        height: 140px;
+        border-radius: 12px;
+        border: 2px solid var(--border);
+      }
+      .modal-qr a {
+        display: block;
+        margin-top: 8px;
+        font-size: 13px;
+        color: var(--accent);
+      }
+      .modal-footer {
+        padding: 0 24px 24px;
+        display: flex;
+        gap: 10px;
+      }
+      .btn-primary {
+        flex: 1;
+        padding: 12px;
+        background: linear-gradient(135deg, #f97316, #ef4444);
+        border: none;
+        border-radius: 10px;
+        color: #fff;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+      .btn-primary:hover {
+        opacity: 0.9;
+      }
+      .btn-ghost {
+        padding: 12px 16px;
+        background: none;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        color: var(--muted);
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s;
+        white-space: nowrap;
+      }
+      .btn-ghost:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
 
-@media(max-width:480px){
-  .modal{border-radius:12px}
-  .modal-header{padding:20px 16px 0}
-  .modal-body{padding:16px}
-  .modal-footer{padding:0 16px 16px}
-  .modal-title{font-size:18px}
-}
-@media(max-width:600px){
-  .container{padding:14px 12px}
-  .card{padding:16px}
-  pre{font-size:12px;padding:12px}
-  .nav-btn{padding:12px 14px;font-size:13px}
-  .model-grid{grid-template-columns:1fr 1fr}
-  .price-grid{grid-template-columns:1fr}
-  .step-title{font-size:14px}
-}
-</style>
-</head>
-<body>
-
-<div style="position:sticky;top:0;z-index:100">
-<div class="header">
-  <div style="display:flex;align-items:center;justify-content:center;gap:10px">
-    <img src="https://gitee.com/eating-pancakes-hexif/apollo-gateway-docs/raw/master/logo.png" alt="Apollo Gateway Logo" style="height:48px;width:auto;flex-shrink:0;object-fit:contain;mix-blend-mode:screen">
-    <h1 style="margin:0">Apollo Gateway</h1>
-    <span class="badge" style="margin-left:4px;font-size:13px">✨ Cursor · Cline · Continue · Codex · OpenCode · OpenAI SDK · Anthropic SDK</span>
-  </div>
-  <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:6px">
-    <p style="margin:0">Claude API 反向代理 · 完整使用文档</p>
-    <a id="headerQQLink" href="#" target="_blank" title="点击加入 QQ 售后群" style="display:inline-flex;align-items:center;gap:6px;background:rgba(124,106,247,.18);border:1px solid rgba(124,106,247,.4);color:var(--accent);padding:5px 14px;border-radius:20px;font-size:13px;font-weight:500;text-decoration:none;transition:all .2s">
-      <span>💬</span>点击加入: <span id="headerQQName">QQ群</span>
-    </a>
-    <div style="position:relative;display:inline-block" onmouseenter="this.querySelector('.qq-qr').style.display='block'" onmouseleave="this.querySelector('.qq-qr').style.display='none'">
-      <span title="悬停显示 QQ 群二维码" style="display:inline-flex;align-items:center;gap:5px;background:rgba(94,234,212,.12);border:1px solid rgba(94,234,212,.3);color:#5eead4;padding:5px 14px;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s">
-        <span>📱</span>扫码加群
-      </span>
-      <div class="qq-qr" style="display:none;position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:200">
-        <img src="https://gitee.com/eating-pancakes-hexif/apollo-gateway-docs/raw/master/qrcode.png" alt="QQ群二维码" style="width:160px;height:160px;border-radius:8px">
-        <div style="text-align:center;color:var(--muted);font-size:12px;margin-top:6px">扫码加入 QQ 群</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="nav-wrap">
-  <div class="nav">
-    <button class="nav-btn active" onclick="switchTab('cursor',this)"><span class="icon">🖥️</span>Cursor</button>
-    <button class="nav-btn" onclick="switchTab('cline',this)"><span class="icon">🔧</span>Cline</button>
-    <button class="nav-btn" onclick="switchTab('continue',this)"><span class="icon">▶️</span>Continue</button>
-    <button class="nav-btn" onclick="switchTab('codex',this)"><span class="icon">📦</span>Codex</button>
-    <button class="nav-btn" onclick="switchTab('opencode',this)"><span class="icon">💻</span>OpenCode</button>
-    <button class="nav-btn" onclick="switchTab('api',this)"><span class="icon">🔌</span>API 接入</button>
-    <button class="nav-btn" onclick="switchTab('models',this)"><span class="icon">🤖</span>模型 & 价格</button>
-    <button class="nav-btn" onclick="switchTab('errors',this)"><span class="icon">⚠️</span>错误码</button>
-  </div>
-</div>
-</div>
-
-<!-- ===== WELCOME MODAL ===== -->
-<div class="modal-overlay hidden" id="welcomeModal">
-  <div class="modal">
-    <div class="modal-header">
-      <img src="https://gitee.com/eating-pancakes-hexif/apollo-gateway-docs/raw/master/logo.png" alt="ApolloInn" class="modal-logo">
-      <div class="modal-title">Apollo Gateway</div>
-      <div class="modal-sub">Claude API 反向代理服务</div>
-    </div>
-    <div class="modal-body">
-
-      <div class="modal-section">
-        <div class="modal-section-title">💰 充值价格</div>
-        <div id="priceList"></div>
-      </div>
-
-      <div class="modal-section">
-        <div class="modal-section-title" style="cursor:pointer;user-select:none;display:flex;justify-content:space-between;align-items:center" onclick="toggleModels(this)">
-          <span>🤖 支持模型（14 个）</span>
-          <span id="modelsArrow" style="font-size:12px;color:var(--muted);transition:transform .2s">▼ 展开</span>
+      @media (max-width: 480px) {
+        .modal {
+          border-radius: 12px;
+        }
+        .modal-header {
+          padding: 20px 16px 0;
+        }
+        .modal-body {
+          padding: 16px;
+        }
+        .modal-footer {
+          padding: 0 16px 16px;
+        }
+        .modal-title {
+          font-size: 18px;
+        }
+      }
+      @media (max-width: 600px) {
+        .container {
+          padding: 14px 12px;
+        }
+        .card {
+          padding: 16px;
+        }
+        pre {
+          font-size: 12px;
+          padding: 12px;
+        }
+        .nav-btn {
+          padding: 12px 14px;
+          font-size: 13px;
+        }
+        .model-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        .price-grid {
+          grid-template-columns: 1fr;
+        }
+        .step-title {
+          font-size: 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div style="position: sticky; top: 0; z-index: 100">
+      <div class="header">
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+          "
+        >
+          <img
+            src="logo.png"
+            alt="Apollo Gateway Logo"
+            style="
+              height: 48px;
+              width: auto;
+              flex-shrink: 0;
+              object-fit: contain;
+              mix-blend-mode: screen;
+            "
+          />
+          <h1 style="margin: 0">Apollo Gateway</h1>
+          <span class="badge" style="margin-left: 4px; font-size: 13px"
+            >✨ Cursor · Cline · Continue · Codex · OpenCode · OpenAI SDK ·
+            Anthropic SDK</span
+          >
         </div>
-        <div id="modelsList" style="display:none;margin-top:10px">
-          <div class="ide-tags">
-            <span class="ide-tag">Claude-Opus-4.6</span>
-            <span class="ide-tag">Kiro-Opus-4-6</span>
-            <span class="ide-tag">Claude-Opus-4.5</span>
-            <span class="ide-tag">Kiro-Opus-4-5</span>
-            <span class="ide-tag">Claude-Sonnet-4.6</span>
-            <span class="ide-tag">Kiro-Sonnet-4-6</span>
-            <span class="ide-tag">Claude-Sonnet-4.5</span>
-            <span class="ide-tag">Kiro-Sonnet-4-5</span>
-            <span class="ide-tag">Claude-Sonnet-4</span>
-            <span class="ide-tag">Kiro-Sonnet-4</span>
-            <span class="ide-tag">Claude-Haiku-4.5</span>
-            <span class="ide-tag">Kiro-Haiku-4-5</span>
-            <span class="ide-tag">Kiro-Haiku</span>
-            <span class="ide-tag">Kiro-Auto</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="modal-section">
-        <div class="modal-section-title">🛠️ 支持工具</div>
-        <div class="ide-tags">
-          <span class="ide-tag">🖥️ Cursor</span>
-          <span class="ide-tag">🔧 Cline</span>
-          <span class="ide-tag">▶️ Continue</span>
-          <span class="ide-tag">📦 Codex</span>
-          <span class="ide-tag">💻 OpenCode</span>
-          <span class="ide-tag">🐍 OpenAI SDK</span>
-          <span class="ide-tag">🔷 Anthropic SDK</span>
-        </div>
-      </div>
-
-      <div class="modal-section">
-        <div class="modal-section-title">📱 售后 QQ 群</div>
-        <div style="display:flex;align-items:center;gap:16px">
-          <img src="https://gitee.com/eating-pancakes-hexif/apollo-gateway-docs/raw/master/qrcode.png" alt="QQ群二维码" style="width:110px;height:110px;border-radius:10px;border:2px solid var(--border);flex-shrink:0">
-          <a id="qqLink" href="#" target="_blank" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;background:linear-gradient(135deg,#f97316,#ef4444);border-radius:12px;color:#fff;font-size:14px;font-weight:700;text-decoration:none;text-align:center;line-height:1.4">
-            <span style="font-size:20px">💬</span>
-            <span>加入售后群<br><span style="font-size:12px;font-weight:400;opacity:.85">ApolloInn售后</span></span>
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 6px;
+          "
+        >
+          <p style="margin: 0">Claude API 反向代理 · 完整使用文档</p>
+          <a
+            id="headerQQLink"
+            href="#"
+            target="_blank"
+            title="点击加入 QQ 售后群"
+            style="
+              display: inline-flex;
+              align-items: center;
+              gap: 6px;
+              background: rgba(124, 106, 247, 0.18);
+              border: 1px solid rgba(124, 106, 247, 0.4);
+              color: var(--accent);
+              padding: 5px 14px;
+              border-radius: 20px;
+              font-size: 13px;
+              font-weight: 500;
+              text-decoration: none;
+              transition: all 0.2s;
+            "
+          >
+            <span>💬</span>点击加入: <span id="headerQQName">QQ群</span>
           </a>
-        </div>
-      </div>
-
-    </div>
-    <div class="modal-footer">
-      <button class="btn-ghost" onclick="closeModal(true)">不再提示</button>
-      <button class="btn-primary" onclick="closeModal(false)">开始使用 →</button>
-    </div>
-  </div>
-</div>
-
-<div class="container">
-
-<!-- ===== CURSOR TAB ===== -->
-<div id="tab-cursor" class="tab-content active">
-
-  <div class="alert alert-warn">
-    <span class="alert-icon">⚠️</span>
-    <div>需要魔法（代理）才能使用。建议在 Cursor 中开启内置 HTTP 代理。请更新至最新版 Cursor，旧版不支持。</div>
-  </div>
-
-  <div class="card">
-    <div class="card-title"><span class="dot"></span>配置步骤</div>
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <div class="step-body">
-          <div class="step-title">打开 Cursor 设置</div>
-          <div class="step-desc">点击右上角齿轮图标，或按 <code>Ctrl+Shift+J</code>（Windows）/ <code>Cmd+Shift+J</code>（macOS）打开 Cursor Settings。</div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <div class="step-body">
-          <div class="step-title">进入 Models 选项卡</div>
-          <div class="step-desc">在设置页面左侧选择 <strong>Models</strong>，展开底部 <strong>"自定义 API Keys"</strong> 区域。</div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-body">
-          <div class="step-title">填写 API Key 和接口地址</div>
-          <div class="step-desc">在 <strong>OpenAI API Key</strong> 和 <strong>Override OpenAI Base URL</strong> 中分别填写：</div>
-          <div class="code-wrap" style="margin-top:10px">
-            <div class="code-label">API Key</div>
-            <pre><code>ap-xxxxxxxxxxxx（你的 API Key）</code></pre>
-            <button class="copy-btn" onclick="copyCode(this)">复制</button>
-          </div>
-          <div class="code-wrap">
-            <div class="code-label">Base URL</div>
-            <pre><code>https://api.apolloinn.site/v1</code></pre>
-            <button class="copy-btn" onclick="copyCode(this)">复制</button>
-          </div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <div class="step-body">
-          <div class="step-title">在模型列表中添加自定义模型</div>
-          <div class="step-desc">在 Models 列表中点击 <strong>+ Add Model</strong>，输入模型名称，例如 <code>Kiro-Sonnet-4-6</code>，点击 ADD 按钮确认。</div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">5</div>
-        <div class="step-body">
-          <div class="step-title">切换账号并刷新</div>
-          <div class="step-desc">切换账号后按照上述步骤重新配置，配置完成后刷新页面即可使用功能会话。</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title"><span class="dot"></span>有无 Cursor Pro 账户的配置方式</div>
-    <div class="table-wrap" style="margin-bottom:12px">
-      <table>
-        <tr><th>情况</th><th>配置方式</th></tr>
-        <tr><td>✅ 自有 Cursor Pro 账户</td><td>按上方步骤填写 API Key、添加模型即可，无需额外操作</td></tr>
-        <tr><td>❌ 无 Cursor Pro 账户</td><td>下载 <strong>Apollo Agent</strong>，双击运行，按提示一键完成配置</td></tr>
-      </table>
-    </div>
-    <div style="display:flex;gap:12px;flex-wrap:wrap;margin:14px 0">
-      <a href="https://github.com/ApolloInn/ApolloInn/releases/download/v1.0.0/ApolloAgent.dmg" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:linear-gradient(135deg,rgba(124,106,247,.15),rgba(94,234,212,.1));border:1px solid rgba(124,106,247,.4);border-radius:10px;color:var(--text);font-size:14px;font-weight:500;transition:all .2s;text-decoration:none">🍎 macOS 下载 <span style="color:var(--muted);font-size:12px">(.dmg)</span></a>
-      <a href="https://github.com/ApolloInn/ApolloInn/releases/download/v2.0.0-win/ApolloAgent.exe" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:linear-gradient(135deg,rgba(124,106,247,.15),rgba(94,234,212,.1));border:1px solid rgba(124,106,247,.4);border-radius:10px;color:var(--text);font-size:14px;font-weight:500;transition:all .2s;text-decoration:none">🪟 Windows 下载 <span style="color:var(--muted);font-size:12px">(.exe)</span></a>
-    </div>
-    <div class="alert alert-info">
-      <span class="alert-icon">💡</span>
-      <div>Apollo Agent 配置完成后刷新页面，即可使用 Agent 等全部功能。</div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title"><span class="dot"></span>Cursor 中使用的模型（Kiro- 开头，共 8 个）</div>
-    <div class="step-desc" style="margin-bottom:12px">在 Cursor 中必须使用 <strong>Kiro- 开头</strong>的模型名称，复制填入 Models 列表即可：</div>
-    <div class="model-grid">
-      <div class="model-card"><div class="model-name">Kiro-Opus-4-6</div><div class="model-alias">claude-opus-4.6</div></div>
-      <div class="model-card"><div class="model-name">Kiro-Opus-4-5</div><div class="model-alias">claude-opus-4.5</div></div>
-      <div class="model-card"><div class="model-name">Kiro-Sonnet-4-6</div><div class="model-alias">claude-sonnet-4.6</div></div>
-      <div class="model-card"><div class="model-name">Kiro-Sonnet-4-5</div><div class="model-alias">claude-sonnet-4.5</div></div>
-      <div class="model-card"><div class="model-name">Kiro-Sonnet-4</div><div class="model-alias">claude-sonnet-4</div></div>
-      <div class="model-card"><div class="model-name">Kiro-Haiku-4-5</div><div class="model-alias">claude-haiku-4.5</div></div>
-      <div class="model-card"><div class="model-name">Kiro-Haiku</div><div class="model-alias">claude-haiku-4.5</div></div>
-      <div class="model-card"><div class="model-name">Kiro-Auto</div><div class="model-alias">自动选择</div></div>
-    </div>
-    <div class="alert alert-warn" style="margin-top:12px">
-      <span class="alert-icon">⚠️</span>
-      <div>Cursor 中请使用 Kiro- 开头的模型，不要使用 Cursor 自带账号的模型，否则会与付费账号冲突。</div>
-    </div>
-  </div>
-
-</div>
-
-<!-- ===== CLINE TAB ===== -->
-<div id="tab-cline" class="tab-content">
-  <div class="alert alert-warn">
-    <span class="alert-icon">⚠️</span>
-    <div>需要魔法（代理）才能正常访问。建议开启系统代理。</div>
-  </div>
-  <div class="card">
-    <div class="card-title"><span class="dot"></span>配置步骤（VS Code 插件）</div>
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <div class="step-body">
-          <div class="step-title">安装 Cline 插件</div>
-          <div class="step-desc">在 VS Code 扩展市场搜索 <strong>Cline</strong> 并安装。</div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <div class="step-body">
-          <div class="step-title">打开 Cline 设置</div>
-          <div class="step-desc">点击侧边栏 Cline 图标，点击右上角齿轮 ⚙️ 进入设置。</div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-body">
-          <div class="step-title">选择 API Provider</div>
-          <div class="step-desc">在 <strong>API Provider</strong> 下拉框中选择 <strong>OpenAI Compatible</strong>。</div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <div class="step-body">
-          <div class="step-title">填写配置信息</div>
-          <div class="step-desc">依次填写以下内容：</div>
-          <div class="code-wrap" style="margin-top:10px">
-            <div class="code-label">Base URL</div>
-            <pre><code>https://api.apolloinn.site/v1</code></pre>
-            <button class="copy-btn" onclick="copyCode(this)">复制</button>
-          </div>
-          <div class="code-wrap">
-            <div class="code-label">API Key</div>
-            <pre><code>ap-xxxxxxxxxxxx（你的 API Key）</code></pre>
-            <button class="copy-btn" onclick="copyCode(this)">复制</button>
-          </div>
-          <div class="code-wrap">
-            <div class="code-label">Model</div>
-            <pre><code>claude-sonnet-4.6</code></pre>
-            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+          <div
+            style="position: relative; display: inline-block"
+            onmouseenter="this.querySelector('.qq-qr').style.display = 'block'"
+            onmouseleave="this.querySelector('.qq-qr').style.display = 'none'"
+          >
+            <span
+              title="悬停显示 QQ 群二维码"
+              style="
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                background: rgba(94, 234, 212, 0.12);
+                border: 1px solid rgba(94, 234, 212, 0.3);
+                color: #5eead4;
+                padding: 5px 14px;
+                border-radius: 20px;
+                font-size: 13px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s;
+              "
+            >
+              <span>📱</span>扫码加群
+            </span>
+            <div
+              class="qq-qr"
+              style="
+                display: none;
+                position: absolute;
+                top: calc(100% + 10px);
+                left: 50%;
+                transform: translateX(-50%);
+                background: var(--card);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                padding: 12px;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+                z-index: 200;
+              "
+            >
+              <img
+                src="qrcode.png"
+                alt="QQ群二维码"
+                style="width: 160px; height: 160px; border-radius: 8px"
+              />
+              <div
+                style="
+                  text-align: center;
+                  color: var(--muted);
+                  font-size: 12px;
+                  margin-top: 6px;
+                "
+              >
+                扫码加入 QQ 群
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      <div class="step">
-        <div class="step-num">5</div>
-        <div class="step-body">
-          <div class="step-title">保存并开始使用</div>
-          <div class="step-desc">点击 <strong>Save</strong>，回到 Cline 对话框即可开始使用。</div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-title"><span class="dot"></span>配置参数速查</div>
-    <div class="table-wrap">
-      <table>
-        <tr><th>配置项</th><th>值</th></tr>
-        <tr><td>API Provider</td><td>OpenAI Compatible</td></tr>
-        <tr><td>Base URL</td><td><code>https://api.apolloinn.site/v1</code></td></tr>
-        <tr><td>API Key</td><td><code>ap-xxx（你的 Key）</code></td></tr>
-        <tr><td>推荐模型</td><td><code>claude-sonnet-4.6</code></td></tr>
-      </table>
-    </div>
-  </div>
-</div>
 
-<!-- ===== CONTINUE TAB ===== -->
-<div id="tab-continue" class="tab-content">
-  <div class="alert alert-warn">
-    <span class="alert-icon">⚠️</span>
-    <div>需要魔法（代理）才能正常访问。建议开启系统代理。</div>
-  </div>
-  <div class="card">
-    <div class="card-title"><span class="dot"></span>配置步骤（VS Code / JetBrains 插件）</div>
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <div class="step-body">
-          <div class="step-title">安装 Continue 插件</div>
-          <div class="step-desc">在 VS Code 或 JetBrains 扩展市场搜索 <strong>Continue</strong> 并安装。</div>
+      <div class="nav-wrap">
+        <div class="nav">
+          <button class="nav-btn active" onclick="switchTab('cursor', this)">
+            <span class="icon">🖥️</span>Cursor
+          </button>
+          <button class="nav-btn" onclick="switchTab('cline', this)">
+            <span class="icon">🔧</span>Cline
+          </button>
+          <button class="nav-btn" onclick="switchTab('continue', this)">
+            <span class="icon">▶️</span>Continue
+          </button>
+          <button class="nav-btn" onclick="switchTab('codex', this)">
+            <span class="icon">📦</span>Codex
+          </button>
+          <button class="nav-btn" onclick="switchTab('opencode', this)">
+            <span class="icon">💻</span>OpenCode
+          </button>
+          <button class="nav-btn" onclick="switchTab('api', this)">
+            <span class="icon">🔌</span>API 接入
+          </button>
+          <button class="nav-btn" onclick="switchTab('models', this)">
+            <span class="icon">🤖</span>模型 & 价格
+          </button>
+          <button class="nav-btn" onclick="switchTab('errors', this)">
+            <span class="icon">⚠️</span>错误码
+          </button>
         </div>
       </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <div class="step-body">
-          <div class="step-title">打开配置文件</div>
-          <div class="step-desc">点击 Continue 侧边栏底部的 <strong>⚙️ 设置</strong>，或直接编辑配置文件：<code>~/.continue/config.yaml</code></div>
+    </div>
+
+    <!-- ===== WELCOME MODAL ===== -->
+    <div class="modal-overlay hidden" id="welcomeModal">
+      <div class="modal">
+        <div class="modal-header">
+          <img src="logo.png" alt="ApolloInn" class="modal-logo" />
+          <div class="modal-title">Apollo Gateway</div>
+          <div class="modal-sub">Claude API 反向代理服务</div>
+        </div>
+        <div class="modal-body">
+          <div class="modal-section">
+            <div class="modal-section-title">💰 充值价格</div>
+            <div id="priceList"></div>
+          </div>
+
+          <div class="modal-section">
+            <div
+              class="modal-section-title"
+              style="
+                cursor: pointer;
+                user-select: none;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+              onclick="toggleModels(this)"
+            >
+              <span>🤖 支持模型（14 个）</span>
+              <span
+                id="modelsArrow"
+                style="
+                  font-size: 12px;
+                  color: var(--muted);
+                  transition: transform 0.2s;
+                "
+                >▼ 展开</span
+              >
+            </div>
+            <div id="modelsList" style="display: none; margin-top: 10px">
+              <div class="ide-tags">
+                <span class="ide-tag">Claude-Opus-4.6</span>
+                <span class="ide-tag">Kiro-Opus-4-6</span>
+                <span class="ide-tag">Claude-Opus-4.5</span>
+                <span class="ide-tag">Kiro-Opus-4-5</span>
+                <span class="ide-tag">Claude-Sonnet-4.6</span>
+                <span class="ide-tag">Kiro-Sonnet-4-6</span>
+                <span class="ide-tag">Claude-Sonnet-4.5</span>
+                <span class="ide-tag">Kiro-Sonnet-4-5</span>
+                <span class="ide-tag">Claude-Sonnet-4</span>
+                <span class="ide-tag">Kiro-Sonnet-4</span>
+                <span class="ide-tag">Claude-Haiku-4.5</span>
+                <span class="ide-tag">Kiro-Haiku-4-5</span>
+                <span class="ide-tag">Kiro-Haiku</span>
+                <span class="ide-tag">Kiro-Auto</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-section">
+            <div class="modal-section-title">🛠️ 支持工具</div>
+            <div class="ide-tags">
+              <span class="ide-tag">🖥️ Cursor</span>
+              <span class="ide-tag">🔧 Cline</span>
+              <span class="ide-tag">▶️ Continue</span>
+              <span class="ide-tag">📦 Codex</span>
+              <span class="ide-tag">💻 OpenCode</span>
+              <span class="ide-tag">🐍 OpenAI SDK</span>
+              <span class="ide-tag">🔷 Anthropic SDK</span>
+            </div>
+          </div>
+
+          <div class="modal-section">
+            <div class="modal-section-title">📱 售后 QQ 群</div>
+            <div style="display: flex; align-items: center; gap: 16px">
+              <img
+                src="qrcode.png"
+                alt="QQ群二维码"
+                style="
+                  width: 110px;
+                  height: 110px;
+                  border-radius: 10px;
+                  border: 2px solid var(--border);
+                  flex-shrink: 0;
+                "
+              />
+              <a
+                id="qqLink"
+                href="#"
+                target="_blank"
+                style="
+                  flex: 1;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  gap: 8px;
+                  padding: 14px;
+                  background: linear-gradient(135deg, #f97316, #ef4444);
+                  border-radius: 12px;
+                  color: #fff;
+                  font-size: 14px;
+                  font-weight: 700;
+                  text-decoration: none;
+                  text-align: center;
+                  line-height: 1.4;
+                "
+              >
+                <span style="font-size: 20px">💬</span>
+                <span
+                  >加入售后群<br /><span
+                    style="font-size: 12px; font-weight: 400; opacity: 0.85"
+                    >ApolloInn售后</span
+                  ></span
+                >
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-ghost" onclick="closeModal(true)">不再提示</button>
+          <button class="btn-primary" onclick="closeModal(false)">
+            开始使用 →
+          </button>
         </div>
       </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-body">
-          <div class="step-title">写入配置</div>
-          <div class="step-desc">将以下内容粘贴到配置文件中（替换 API Key）：</div>
-          <div class="code-wrap" style="margin-top:10px">
-            <div class="code-label">~/.continue/config.yaml</div>
-<pre><code>name: Apollo Gateway
+    </div>
+
+    <div class="container">
+      <!-- ===== CURSOR TAB ===== -->
+      <div id="tab-cursor" class="tab-content active">
+        <div class="alert alert-warn">
+          <span class="alert-icon">⚠️</span>
+          <div>
+            需要魔法（代理）才能使用。建议在 Cursor 中开启内置 HTTP
+            代理。请更新至最新版 Cursor，旧版不支持。
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span class="dot"></span>配置步骤</div>
+          <div class="steps">
+            <div class="step">
+              <div class="step-num">1</div>
+              <div class="step-body">
+                <div class="step-title">打开 Cursor 设置</div>
+                <div class="step-desc">
+                  点击右上角齿轮图标，或按 <code>Ctrl+Shift+J</code>（Windows）/
+                  <code>Cmd+Shift+J</code>（macOS）打开 Cursor Settings。
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">2</div>
+              <div class="step-body">
+                <div class="step-title">进入 Models 选项卡</div>
+                <div class="step-desc">
+                  在设置页面左侧选择 <strong>Models</strong>，展开底部
+                  <strong>"自定义 API Keys"</strong> 区域。
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">3</div>
+              <div class="step-body">
+                <div class="step-title">填写 API Key 和接口地址</div>
+                <div class="step-desc">
+                  在 <strong>OpenAI API Key</strong> 和
+                  <strong>Override OpenAI Base URL</strong> 中分别填写：
+                </div>
+                <div class="code-wrap" style="margin-top: 10px">
+                  <div class="code-label">API Key</div>
+                  <pre><code>ap-xxxxxxxxxxxx（你的 API Key）</code></pre>
+                  <button class="copy-btn" onclick="copyCode(this)">
+                    复制
+                  </button>
+                </div>
+                <div class="code-wrap">
+                  <div class="code-label">Base URL</div>
+                  <pre><code>https://api.apolloinn.site/v1</code></pre>
+                  <button class="copy-btn" onclick="copyCode(this)">
+                    复制
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">4</div>
+              <div class="step-body">
+                <div class="step-title">在模型列表中添加自定义模型</div>
+                <div class="step-desc">
+                  在 Models 列表中点击
+                  <strong>+ Add Model</strong>，输入模型名称，例如
+                  <code>Kiro-Sonnet-4-6</code>，点击 ADD 按钮确认。
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">5</div>
+              <div class="step-body">
+                <div class="step-title">切换账号并刷新</div>
+                <div class="step-desc">
+                  切换账号后按照上述步骤重新配置，配置完成后刷新页面即可使用功能会话。
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span class="dot"></span>有无 Cursor Pro 账户的配置方式
+          </div>
+          <div class="table-wrap" style="margin-bottom: 12px">
+            <table>
+              <tr>
+                <th>情况</th>
+                <th>配置方式</th>
+              </tr>
+              <tr>
+                <td>✅ 自有 Cursor Pro 账户</td>
+                <td>按上方步骤填写 API Key、添加模型即可，无需额外操作</td>
+              </tr>
+              <tr>
+                <td>❌ 无 Cursor Pro 账户</td>
+                <td>
+                  下载
+                  <strong>Apollo Agent</strong>，双击运行，按提示一键完成配置
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div
+            style="display: flex; gap: 12px; flex-wrap: wrap; margin: 14px 0"
+          >
+            <a
+              href="https://github.com/ApolloInn/ApolloInn/releases/download/v1.0.0/ApolloAgent.dmg"
+              target="_blank"
+              style="
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 10px 20px;
+                background: linear-gradient(
+                  135deg,
+                  rgba(124, 106, 247, 0.15),
+                  rgba(94, 234, 212, 0.1)
+                );
+                border: 1px solid rgba(124, 106, 247, 0.4);
+                border-radius: 10px;
+                color: var(--text);
+                font-size: 14px;
+                font-weight: 500;
+                transition: all 0.2s;
+                text-decoration: none;
+              "
+              >🍎 macOS 下载
+              <span style="color: var(--muted); font-size: 12px"
+                >(.dmg)</span
+              ></a
+            >
+            <a
+              href="https://github.com/ApolloInn/ApolloInn/releases/download/v2.0.0-win/ApolloAgent.exe"
+              target="_blank"
+              style="
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 10px 20px;
+                background: linear-gradient(
+                  135deg,
+                  rgba(124, 106, 247, 0.15),
+                  rgba(94, 234, 212, 0.1)
+                );
+                border: 1px solid rgba(124, 106, 247, 0.4);
+                border-radius: 10px;
+                color: var(--text);
+                font-size: 14px;
+                font-weight: 500;
+                transition: all 0.2s;
+                text-decoration: none;
+              "
+              >🪟 Windows 下载
+              <span style="color: var(--muted); font-size: 12px"
+                >(.exe)</span
+              ></a
+            >
+          </div>
+          <div class="alert alert-info">
+            <span class="alert-icon">💡</span>
+            <div>
+              Apollo Agent 配置完成后刷新页面，即可使用 Agent 等全部功能。
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span class="dot"></span>Cursor 中使用的模型（Kiro- 开头，共 8 个）
+          </div>
+          <div class="step-desc" style="margin-bottom: 12px">
+            在 Cursor 中必须使用 <strong>Kiro- 开头</strong>的模型名称，复制填入
+            Models 列表即可：
+          </div>
+          <div class="model-grid">
+            <div class="model-card">
+              <div class="model-name">Kiro-Opus-4-6</div>
+              <div class="model-alias">claude-opus-4.6</div>
+            </div>
+            <div class="model-card">
+              <div class="model-name">Kiro-Opus-4-5</div>
+              <div class="model-alias">claude-opus-4.5</div>
+            </div>
+            <div class="model-card">
+              <div class="model-name">Kiro-Sonnet-4-6</div>
+              <div class="model-alias">claude-sonnet-4.6</div>
+            </div>
+            <div class="model-card">
+              <div class="model-name">Kiro-Sonnet-4-5</div>
+              <div class="model-alias">claude-sonnet-4.5</div>
+            </div>
+            <div class="model-card">
+              <div class="model-name">Kiro-Sonnet-4</div>
+              <div class="model-alias">claude-sonnet-4</div>
+            </div>
+            <div class="model-card">
+              <div class="model-name">Kiro-Haiku-4-5</div>
+              <div class="model-alias">claude-haiku-4.5</div>
+            </div>
+            <div class="model-card">
+              <div class="model-name">Kiro-Haiku</div>
+              <div class="model-alias">claude-haiku-4.5</div>
+            </div>
+            <div class="model-card">
+              <div class="model-name">Kiro-Auto</div>
+              <div class="model-alias">自动选择</div>
+            </div>
+          </div>
+          <div class="alert alert-warn" style="margin-top: 12px">
+            <span class="alert-icon">⚠️</span>
+            <div>
+              Cursor 中请使用 Kiro- 开头的模型，不要使用 Cursor
+              自带账号的模型，否则会与付费账号冲突。
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== CLINE TAB ===== -->
+      <div id="tab-cline" class="tab-content">
+        <div class="alert alert-warn">
+          <span class="alert-icon">⚠️</span>
+          <div>需要魔法（代理）才能正常访问。建议开启系统代理。</div>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            <span class="dot"></span>配置步骤（VS Code 插件）
+          </div>
+          <div class="steps">
+            <div class="step">
+              <div class="step-num">1</div>
+              <div class="step-body">
+                <div class="step-title">安装 Cline 插件</div>
+                <div class="step-desc">
+                  在 VS Code 扩展市场搜索 <strong>Cline</strong> 并安装。
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">2</div>
+              <div class="step-body">
+                <div class="step-title">打开 Cline 设置</div>
+                <div class="step-desc">
+                  点击侧边栏 Cline 图标，点击右上角齿轮 ⚙️ 进入设置。
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">3</div>
+              <div class="step-body">
+                <div class="step-title">选择 API Provider</div>
+                <div class="step-desc">
+                  在 <strong>API Provider</strong> 下拉框中选择
+                  <strong>OpenAI Compatible</strong>。
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">4</div>
+              <div class="step-body">
+                <div class="step-title">填写配置信息</div>
+                <div class="step-desc">依次填写以下内容：</div>
+                <div class="code-wrap" style="margin-top: 10px">
+                  <div class="code-label">Base URL</div>
+                  <pre><code>https://api.apolloinn.site/v1</code></pre>
+                  <button class="copy-btn" onclick="copyCode(this)">
+                    复制
+                  </button>
+                </div>
+                <div class="code-wrap">
+                  <div class="code-label">API Key</div>
+                  <pre><code>ap-xxxxxxxxxxxx（你的 API Key）</code></pre>
+                  <button class="copy-btn" onclick="copyCode(this)">
+                    复制
+                  </button>
+                </div>
+                <div class="code-wrap">
+                  <div class="code-label">Model</div>
+                  <pre><code>claude-sonnet-4.6</code></pre>
+                  <button class="copy-btn" onclick="copyCode(this)">
+                    复制
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">5</div>
+              <div class="step-body">
+                <div class="step-title">保存并开始使用</div>
+                <div class="step-desc">
+                  点击 <strong>Save</strong>，回到 Cline 对话框即可开始使用。
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><span class="dot"></span>配置参数速查</div>
+          <div class="table-wrap">
+            <table>
+              <tr>
+                <th>配置项</th>
+                <th>值</th>
+              </tr>
+              <tr>
+                <td>API Provider</td>
+                <td>OpenAI Compatible</td>
+              </tr>
+              <tr>
+                <td>Base URL</td>
+                <td><code>https://api.apolloinn.site/v1</code></td>
+              </tr>
+              <tr>
+                <td>API Key</td>
+                <td><code>ap-xxx（你的 Key）</code></td>
+              </tr>
+              <tr>
+                <td>推荐模型</td>
+                <td><code>claude-sonnet-4.6</code></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== CONTINUE TAB ===== -->
+      <div id="tab-continue" class="tab-content">
+        <div class="alert alert-warn">
+          <span class="alert-icon">⚠️</span>
+          <div>需要魔法（代理）才能正常访问。建议开启系统代理。</div>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            <span class="dot"></span>配置步骤（VS Code / JetBrains 插件）
+          </div>
+          <div class="steps">
+            <div class="step">
+              <div class="step-num">1</div>
+              <div class="step-body">
+                <div class="step-title">安装 Continue 插件</div>
+                <div class="step-desc">
+                  在 VS Code 或 JetBrains 扩展市场搜索
+                  <strong>Continue</strong> 并安装。
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">2</div>
+              <div class="step-body">
+                <div class="step-title">打开配置文件</div>
+                <div class="step-desc">
+                  点击 Continue 侧边栏底部的
+                  <strong>⚙️ 设置</strong>，或直接编辑配置文件：<code
+                    >~/.continue/config.yaml</code
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">3</div>
+              <div class="step-body">
+                <div class="step-title">写入配置</div>
+                <div class="step-desc">
+                  将以下内容粘贴到配置文件中（替换 API Key）：
+                </div>
+                <div class="code-wrap" style="margin-top: 10px">
+                  <div class="code-label">~/.continue/config.yaml</div>
+                  <pre><code>name: Apollo Gateway
 version: 1.0.0
 schema: v1
 models:
@@ -496,136 +1333,177 @@ models:
     model: claude-haiku-4.5
     apiKey: ap-你的apikey
     apiBase: https://api.apolloinn.site/standard/v1</code></pre>
-            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                  <button class="copy-btn" onclick="copyCode(this)">
+                    复制
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">4</div>
+              <div class="step-body">
+                <div class="step-title">保存并重载</div>
+                <div class="step-desc">
+                  保存文件后，Continue
+                  会自动重载配置。在模型选择器中选择对应模型即可使用。
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="alert alert-info">
+          <span class="alert-icon">💡</span>
+          <div>
+            Continue 使用 <code>/standard/v1</code> 端点（标准 OpenAI
+            兼容），而非 Cursor 专用的 <code>/v1</code> 端点。
           </div>
         </div>
       </div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <div class="step-body">
-          <div class="step-title">保存并重载</div>
-          <div class="step-desc">保存文件后，Continue 会自动重载配置。在模型选择器中选择对应模型即可使用。</div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="alert alert-info">
-    <span class="alert-icon">💡</span>
-    <div>Continue 使用 <code>/standard/v1</code> 端点（标准 OpenAI 兼容），而非 Cursor 专用的 <code>/v1</code> 端点。</div>
-  </div>
-</div>
 
-<!-- ===== CODEX TAB ===== -->
-<div id="tab-codex" class="tab-content">
-  <div class="alert alert-warn">
-    <span class="alert-icon">⚠️</span>
-    <div>需要魔法（代理）才能正常访问。建议开启系统代理。</div>
-  </div>
-  <div class="card">
-    <div class="card-title"><span class="dot"></span>配置步骤（OpenAI Codex CLI）</div>
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <div class="step-body">
-          <div class="step-title">安装 Codex CLI</div>
-          <div class="code-wrap" style="margin-top:8px">
-            <div class="code-label">npm</div>
-            <pre><code>npm install -g @openai/codex</code></pre>
-            <button class="copy-btn" onclick="copyCode(this)">复制</button>
-          </div>
+      <!-- ===== CODEX TAB ===== -->
+      <div id="tab-codex" class="tab-content">
+        <div class="alert alert-warn">
+          <span class="alert-icon">⚠️</span>
+          <div>需要魔法（代理）才能正常访问。建议开启系统代理。</div>
         </div>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <div class="step-body">
-          <div class="step-title">创建配置文件</div>
-          <div class="step-desc">在 <code>~/.codex/config.yaml</code> 中写入以下配置：</div>
-          <div class="code-wrap" style="margin-top:8px">
-            <div class="code-label">~/.codex/config.yaml</div>
-<pre><code>model: claude-sonnet-4.6
+        <div class="card">
+          <div class="card-title">
+            <span class="dot"></span>配置步骤（OpenAI Codex CLI）
+          </div>
+          <div class="steps">
+            <div class="step">
+              <div class="step-num">1</div>
+              <div class="step-body">
+                <div class="step-title">安装 Codex CLI</div>
+                <div class="code-wrap" style="margin-top: 8px">
+                  <div class="code-label">npm</div>
+                  <pre><code>npm install -g @openai/codex</code></pre>
+                  <button class="copy-btn" onclick="copyCode(this)">
+                    复制
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">2</div>
+              <div class="step-body">
+                <div class="step-title">创建配置文件</div>
+                <div class="step-desc">
+                  在 <code>~/.codex/config.yaml</code> 中写入以下配置：
+                </div>
+                <div class="code-wrap" style="margin-top: 8px">
+                  <div class="code-label">~/.codex/config.yaml</div>
+                  <pre><code>model: claude-sonnet-4.6
 provider: openai
 apiKey: ap-你的apikey
 apiBase: https://api.apolloinn.site/standard/v1</code></pre>
-            <button class="copy-btn" onclick="copyCode(this)">复制</button>
-          </div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-body">
-          <div class="step-title">或使用环境变量</div>
-          <div class="code-wrap" style="margin-top:8px">
-            <div class="code-label">bash / zsh</div>
-<pre><code>export OPENAI_API_KEY="ap-你的apikey"
+                  <button class="copy-btn" onclick="copyCode(this)">
+                    复制
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">3</div>
+              <div class="step-body">
+                <div class="step-title">或使用环境变量</div>
+                <div class="code-wrap" style="margin-top: 8px">
+                  <div class="code-label">bash / zsh</div>
+                  <pre><code>export OPENAI_API_KEY="ap-你的apikey"
 export OPENAI_BASE_URL="https://api.apolloinn.site/standard/v1"</code></pre>
-            <button class="copy-btn" onclick="copyCode(this)">复制</button>
-          </div>
-          <div class="code-wrap">
-            <div class="code-label">Windows PowerShell</div>
-<pre><code>$env:OPENAI_API_KEY="ap-你的apikey"
+                  <button class="copy-btn" onclick="copyCode(this)">
+                    复制
+                  </button>
+                </div>
+                <div class="code-wrap">
+                  <div class="code-label">Windows PowerShell</div>
+                  <pre><code>$env:OPENAI_API_KEY="ap-你的apikey"
 $env:OPENAI_BASE_URL="https://api.apolloinn.site/standard/v1"</code></pre>
-            <button class="copy-btn" onclick="copyCode(this)">复制</button>
-          </div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <div class="step-body">
-          <div class="step-title">启动 Codex</div>
-          <div class="code-wrap" style="margin-top:8px">
-            <div class="code-label">命令行</div>
-<pre><code># 指定模型启动
+                  <button class="copy-btn" onclick="copyCode(this)">
+                    复制
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">4</div>
+              <div class="step-body">
+                <div class="step-title">启动 Codex</div>
+                <div class="code-wrap" style="margin-top: 8px">
+                  <div class="code-label">命令行</div>
+                  <pre><code># 指定模型启动
 codex --model claude-sonnet-4.6
 
 # 或直接启动（使用配置文件中的默认模型）
 codex</code></pre>
-            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                  <button class="copy-btn" onclick="copyCode(this)">
+                    复制
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><span class="dot"></span>配置参数速查</div>
+          <div class="table-wrap">
+            <table>
+              <tr>
+                <th>配置项</th>
+                <th>值</th>
+              </tr>
+              <tr>
+                <td>apiBase / OPENAI_BASE_URL</td>
+                <td><code>https://api.apolloinn.site/standard/v1</code></td>
+              </tr>
+              <tr>
+                <td>apiKey / OPENAI_API_KEY</td>
+                <td><code>ap-xxx（你的 Key）</code></td>
+              </tr>
+              <tr>
+                <td>推荐模型</td>
+                <td><code>claude-sonnet-4.6</code></td>
+              </tr>
+            </table>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-title"><span class="dot"></span>配置参数速查</div>
-    <div class="table-wrap">
-      <table>
-        <tr><th>配置项</th><th>值</th></tr>
-        <tr><td>apiBase / OPENAI_BASE_URL</td><td><code>https://api.apolloinn.site/standard/v1</code></td></tr>
-        <tr><td>apiKey / OPENAI_API_KEY</td><td><code>ap-xxx（你的 Key）</code></td></tr>
-        <tr><td>推荐模型</td><td><code>claude-sonnet-4.6</code></td></tr>
-      </table>
-    </div>
-  </div>
-</div>
 
-<!-- ===== OPENCODE TAB ===== -->
-<div id="tab-opencode" class="tab-content">
-  <div class="alert alert-warn">
-    <span class="alert-icon">⚠️</span>
-    <div>需要魔法（代理）才能正常访问。建议开启系统代理。</div>
-  </div>
-  <div class="card">
-    <div class="card-title"><span class="dot"></span>配置步骤（OpenCode CLI）</div>
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <div class="step-body">
-          <div class="step-title">安装 OpenCode</div>
-          <div class="code-wrap" style="margin-top:8px">
-            <div class="code-label">npm</div>
-            <pre><code>npm install -g opencode-ai</code></pre>
-            <button class="copy-btn" onclick="copyCode(this)">复制</button>
-          </div>
+      <!-- ===== OPENCODE TAB ===== -->
+      <div id="tab-opencode" class="tab-content">
+        <div class="alert alert-warn">
+          <span class="alert-icon">⚠️</span>
+          <div>需要魔法（代理）才能正常访问。建议开启系统代理。</div>
         </div>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <div class="step-body">
-          <div class="step-title">创建配置文件</div>
-          <div class="step-desc">在项目根目录或 <code>~/.config/opencode/config.json</code> 中写入：</div>
-          <div class="code-wrap" style="margin-top:8px">
-            <div class="code-label">opencode.json / config.json</div>
-<pre><code>{
+        <div class="card">
+          <div class="card-title">
+            <span class="dot"></span>配置步骤（OpenCode CLI）
+          </div>
+          <div class="steps">
+            <div class="step">
+              <div class="step-num">1</div>
+              <div class="step-body">
+                <div class="step-title">安装 OpenCode</div>
+                <div class="code-wrap" style="margin-top: 8px">
+                  <div class="code-label">npm</div>
+                  <pre><code>npm install -g opencode-ai</code></pre>
+                  <button class="copy-btn" onclick="copyCode(this)">
+                    复制
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">2</div>
+              <div class="step-body">
+                <div class="step-title">创建配置文件</div>
+                <div class="step-desc">
+                  在项目根目录或
+                  <code>~/.config/opencode/config.json</code> 中写入：
+                </div>
+                <div class="code-wrap" style="margin-top: 8px">
+                  <div class="code-label">opencode.json / config.json</div>
+                  <pre><code>{
   "provider": {
     "openai": {
       "apiKey": "ap-你的apikey",
@@ -634,81 +1512,128 @@ codex</code></pre>
   },
   "model": "openai/claude-sonnet-4.6"
 }</code></pre>
-            <button class="copy-btn" onclick="copyCode(this)">复制</button>
-          </div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-body">
-          <div class="step-title">或使用环境变量</div>
-          <div class="code-wrap" style="margin-top:8px">
-            <div class="code-label">bash / zsh</div>
-<pre><code>export OPENAI_API_KEY="ap-你的apikey"
+                  <button class="copy-btn" onclick="copyCode(this)">
+                    复制
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">3</div>
+              <div class="step-body">
+                <div class="step-title">或使用环境变量</div>
+                <div class="code-wrap" style="margin-top: 8px">
+                  <div class="code-label">bash / zsh</div>
+                  <pre><code>export OPENAI_API_KEY="ap-你的apikey"
 export OPENAI_BASE_URL="https://api.apolloinn.site/standard/v1"</code></pre>
-            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                  <button class="copy-btn" onclick="copyCode(this)">
+                    复制
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">4</div>
+              <div class="step-body">
+                <div class="step-title">启动 OpenCode</div>
+                <div class="code-wrap" style="margin-top: 8px">
+                  <div class="code-label">命令行</div>
+                  <pre><code>opencode</code></pre>
+                  <button class="copy-btn" onclick="copyCode(this)">
+                    复制
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><span class="dot"></span>配置参数速查</div>
+          <div class="table-wrap">
+            <table>
+              <tr>
+                <th>配置项</th>
+                <th>值</th>
+              </tr>
+              <tr>
+                <td>baseURL / OPENAI_BASE_URL</td>
+                <td><code>https://api.apolloinn.site/standard/v1</code></td>
+              </tr>
+              <tr>
+                <td>apiKey / OPENAI_API_KEY</td>
+                <td><code>ap-xxx（你的 Key）</code></td>
+              </tr>
+              <tr>
+                <td>推荐模型</td>
+                <td><code>openai/claude-sonnet-4.6</code></td>
+              </tr>
+            </table>
           </div>
         </div>
       </div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <div class="step-body">
-          <div class="step-title">启动 OpenCode</div>
-          <div class="code-wrap" style="margin-top:8px">
-            <div class="code-label">命令行</div>
-<pre><code>opencode</code></pre>
-            <button class="copy-btn" onclick="copyCode(this)">复制</button>
-          </div>
+
+      <!-- ===== API TAB ===== -->
+      <div id="tab-api" class="tab-content">
+        <div class="sub-tabs">
+          <button class="sub-tab active" onclick="switchSub('s-models', this)">
+            GET 模型列表
+          </button>
+          <button class="sub-tab" onclick="switchSub('s-cursor', this)">
+            Chat (Cursor)
+          </button>
+          <button class="sub-tab" onclick="switchSub('s-standard', this)">
+            Chat (标准) ⭐
+          </button>
+          <button class="sub-tab" onclick="switchSub('s-openai-sdk', this)">
+            OpenAI SDK
+          </button>
+          <button class="sub-tab" onclick="switchSub('s-anthropic', this)">
+            Anthropic
+          </button>
         </div>
-      </div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-title"><span class="dot"></span>配置参数速查</div>
-    <div class="table-wrap">
-      <table>
-        <tr><th>配置项</th><th>值</th></tr>
-        <tr><td>baseURL / OPENAI_BASE_URL</td><td><code>https://api.apolloinn.site/standard/v1</code></td></tr>
-        <tr><td>apiKey / OPENAI_API_KEY</td><td><code>ap-xxx（你的 Key）</code></td></tr>
-        <tr><td>推荐模型</td><td><code>openai/claude-sonnet-4.6</code></td></tr>
-      </table>
-    </div>
-  </div>
-</div>
 
-<!-- ===== API TAB ===== -->
-<div id="tab-api" class="tab-content">
-  <div class="sub-tabs">
-    <button class="sub-tab active" onclick="switchSub('s-models',this)">GET 模型列表</button>
-    <button class="sub-tab" onclick="switchSub('s-cursor',this)">Chat (Cursor)</button>
-    <button class="sub-tab" onclick="switchSub('s-standard',this)">Chat (标准) ⭐</button>
-    <button class="sub-tab" onclick="switchSub('s-openai-sdk',this)">OpenAI SDK</button>
-    <button class="sub-tab" onclick="switchSub('s-anthropic',this)">Anthropic</button>
-  </div>
-
-  <div id="sub-s-models" class="sub-panel active">
-    <div class="card">
-      <div class="endpoint"><span class="tag tag-get">GET</span><span class="endpoint-path">/v1/models</span></div>
-      <p class="step-desc" style="margin-bottom:14px">返回当前所有可用模型列表。</p>
-      <div class="code-wrap"><div class="code-label">cURL</div>
-<pre><code>curl https://api.apolloinn.site/v1/models \
+        <div id="sub-s-models" class="sub-panel active">
+          <div class="card">
+            <div class="endpoint">
+              <span class="tag tag-get">GET</span
+              ><span class="endpoint-path">/v1/models</span>
+            </div>
+            <p class="step-desc" style="margin-bottom: 14px">
+              返回当前所有可用模型列表。
+            </p>
+            <div class="code-wrap">
+              <div class="code-label">cURL</div>
+              <pre><code>curl https://api.apolloinn.site/v1/models \
   -H "Authorization: Bearer your-api-key"</code></pre>
-        <button class="copy-btn" onclick="copyCode(this)">复制</button></div>
-      <div class="code-wrap"><div class="code-label">Python · OpenAI SDK</div>
-<pre><code>from openai import OpenAI
+              <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            </div>
+            <div class="code-wrap">
+              <div class="code-label">Python · OpenAI SDK</div>
+              <pre><code>from openai import OpenAI
 client = OpenAI(api_key="your-api-key", base_url="https://api.apolloinn.site/v1")
 for m in client.models.list().data:
     print(m.id)</code></pre>
-        <button class="copy-btn" onclick="copyCode(this)">复制</button></div>
-    </div>
-  </div>
+              <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            </div>
+          </div>
+        </div>
 
-  <div id="sub-s-cursor" class="sub-panel">
-    <div class="card">
-      <div class="endpoint"><span class="tag tag-post">POST</span><span class="endpoint-path">/v1/chat/completions</span></div>
-      <div class="alert alert-info" style="margin-bottom:14px"><span class="alert-icon">💡</span><div>专为 Cursor IDE 优化，自动将 <code>reasoning_content</code> 转为 <code>&lt;think&gt;</code> 标签格式。</div></div>
-      <div class="code-wrap"><div class="code-label">Python · 流式</div>
-<pre><code>from openai import OpenAI
+        <div id="sub-s-cursor" class="sub-panel">
+          <div class="card">
+            <div class="endpoint">
+              <span class="tag tag-post">POST</span
+              ><span class="endpoint-path">/v1/chat/completions</span>
+            </div>
+            <div class="alert alert-info" style="margin-bottom: 14px">
+              <span class="alert-icon">💡</span>
+              <div>
+                专为 Cursor IDE 优化，自动将 <code>reasoning_content</code> 转为
+                <code>&lt;think&gt;</code> 标签格式。
+              </div>
+            </div>
+            <div class="code-wrap">
+              <div class="code-label">Python · 流式</div>
+              <pre><code>from openai import OpenAI
 client = OpenAI(api_key="your-api-key", base_url="https://api.apolloinn.site/v1")
 response = client.chat.completions.create(
     model="claude-sonnet-4.6",
@@ -718,9 +1643,11 @@ response = client.chat.completions.create(
 for chunk in response:
     if chunk.choices[0].delta.content:
         print(chunk.choices[0].delta.content, end="", flush=True)</code></pre>
-        <button class="copy-btn" onclick="copyCode(this)">复制</button></div>
-      <div class="code-wrap"><div class="code-label">Python · Function Calling</div>
-<pre><code>from openai import OpenAI
+              <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            </div>
+            <div class="code-wrap">
+              <div class="code-label">Python · Function Calling</div>
+              <pre><code>from openai import OpenAI
 client = OpenAI(api_key="your-api-key", base_url="https://api.apolloinn.site/v1")
 tools = [{"type":"function","function":{"name":"get_weather",
     "description":"获取城市天气",
@@ -733,29 +1660,62 @@ resp = client.chat.completions.create(
 if resp.choices[0].message.tool_calls:
     tc = resp.choices[0].message.tool_calls[0]
     print(tc.function.name, tc.function.arguments)</code></pre>
-        <button class="copy-btn" onclick="copyCode(this)">复制</button></div>
-    </div>
-  </div>
+              <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            </div>
+          </div>
+        </div>
 
-  <div id="sub-s-standard" class="sub-panel">
-    <div class="card">
-      <div class="endpoint"><span class="tag tag-post">POST</span><span class="endpoint-path">/standard/v1/chat/completions</span></div>
-      <div class="alert alert-success" style="margin-bottom:14px"><span class="alert-icon">⭐</span><div>推荐接口。完全兼容 OpenAI 格式，支持 <code>reasoning_mode</code> 参数控制思考内容。</div></div>
-      <div class="table-wrap" style="margin-bottom:16px">
-        <table><tr><th>reasoning_mode</th><th>行为</th></tr>
-          <tr><td><code>"drop"</code></td><td>默认，丢弃思考过程，只返回最终回答</td></tr>
-          <tr><td><code>"reasoning_content"</code></td><td>思考内容放在 <code>reasoning_content</code> 字段，与 OpenAI o1 格式一致</td></tr>
-          <tr><td><code>"content"</code></td><td>思考内容用 <code>&lt;think&gt;...&lt;/think&gt;</code> 包裹，拼接到 <code>content</code></td></tr>
-        </table>
-      </div>
-      <div class="code-wrap"><div class="code-label">cURL</div>
-<pre><code>curl -X POST https://api.apolloinn.site/standard/v1/chat/completions \
+        <div id="sub-s-standard" class="sub-panel">
+          <div class="card">
+            <div class="endpoint">
+              <span class="tag tag-post">POST</span
+              ><span class="endpoint-path">/standard/v1/chat/completions</span>
+            </div>
+            <div class="alert alert-success" style="margin-bottom: 14px">
+              <span class="alert-icon">⭐</span>
+              <div>
+                推荐接口。完全兼容 OpenAI 格式，支持
+                <code>reasoning_mode</code> 参数控制思考内容。
+              </div>
+            </div>
+            <div class="table-wrap" style="margin-bottom: 16px">
+              <table>
+                <tr>
+                  <th>reasoning_mode</th>
+                  <th>行为</th>
+                </tr>
+                <tr>
+                  <td><code>"drop"</code></td>
+                  <td>默认，丢弃思考过程，只返回最终回答</td>
+                </tr>
+                <tr>
+                  <td><code>"reasoning_content"</code></td>
+                  <td>
+                    思考内容放在 <code>reasoning_content</code> 字段，与 OpenAI
+                    o1 格式一致
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>"content"</code></td>
+                  <td>
+                    思考内容用
+                    <code>&lt;think&gt;...&lt;/think&gt;</code> 包裹，拼接到
+                    <code>content</code>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <div class="code-wrap">
+              <div class="code-label">cURL</div>
+              <pre><code>curl -X POST https://api.apolloinn.site/standard/v1/chat/completions \
   -H "Authorization: Bearer your-api-key" \
   -H "Content-Type: application/json" \
   -d '{"model":"claude-sonnet-4.6","messages":[{"role":"user","content":"你好！"}],"stream":false}'</code></pre>
-        <button class="copy-btn" onclick="copyCode(this)">复制</button></div>
-      <div class="code-wrap"><div class="code-label">Python · 获取思考过程</div>
-<pre><code>from openai import OpenAI
+              <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            </div>
+            <div class="code-wrap">
+              <div class="code-label">Python · 获取思考过程</div>
+              <pre><code>from openai import OpenAI
 client = OpenAI(api_key="your-api-key", base_url="https://api.apolloinn.site/standard/v1")
 response = client.chat.completions.create(
     model="claude-sonnet-4.6",
@@ -766,9 +1726,11 @@ response = client.chat.completions.create(
 msg = response.choices[0].message
 print("思考过程：", getattr(msg, "reasoning_content", ""))
 print("最终答案：", msg.content)</code></pre>
-        <button class="copy-btn" onclick="copyCode(this)">复制</button></div>
-      <div class="code-wrap"><div class="code-label">Python · 流式 + 思考内容</div>
-<pre><code>from openai import OpenAI
+              <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            </div>
+            <div class="code-wrap">
+              <div class="code-label">Python · 流式 + 思考内容</div>
+              <pre><code>from openai import OpenAI
 client = OpenAI(api_key="your-api-key", base_url="https://api.apolloinn.site/standard/v1")
 response = client.chat.completions.create(
     model="claude-sonnet-4.6",
@@ -782,9 +1744,11 @@ for chunk in response:
         print(delta.reasoning_content, end="", flush=True)
     if delta.content:
         print(delta.content, end="", flush=True)</code></pre>
-        <button class="copy-btn" onclick="copyCode(this)">复制</button></div>
-      <div class="code-wrap"><div class="code-label">JavaScript · Node.js</div>
-<pre><code>import OpenAI from "openai";
+              <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            </div>
+            <div class="code-wrap">
+              <div class="code-label">JavaScript · Node.js</div>
+              <pre><code>import OpenAI from "openai";
 const client = new OpenAI({ apiKey:"your-api-key", baseURL:"https://api.apolloinn.site/standard/v1" });
 const response = await client.chat.completions.create({
   model: "claude-sonnet-4.6",
@@ -795,25 +1759,38 @@ for await (const chunk of response) {
   const c = chunk.choices[0]?.delta?.content;
   if (c) process.stdout.write(c);
 }</code></pre>
-        <button class="copy-btn" onclick="copyCode(this)">复制</button></div>
-    </div>
-  </div>
+              <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            </div>
+          </div>
+        </div>
 
-  <div id="sub-s-openai-sdk" class="sub-panel">
-    <div class="card">
-      <div class="endpoint"><span class="tag tag-post">POST</span><span class="endpoint-path">/standard/v1/chat/completions</span></div>
-      <div class="alert alert-info" style="margin-bottom:14px"><span class="alert-icon">💡</span><div>使用 OpenAI 官方 SDK 直接调用，适合已有 OpenAI SDK 项目快速迁移。</div></div>
-      <div class="code-wrap"><div class="code-label">Python · OpenAI SDK</div>
-<pre><code>from openai import OpenAI
+        <div id="sub-s-openai-sdk" class="sub-panel">
+          <div class="card">
+            <div class="endpoint">
+              <span class="tag tag-post">POST</span
+              ><span class="endpoint-path">/standard/v1/chat/completions</span>
+            </div>
+            <div class="alert alert-info" style="margin-bottom: 14px">
+              <span class="alert-icon">💡</span>
+              <div>
+                使用 OpenAI 官方 SDK 直接调用，适合已有 OpenAI SDK
+                项目快速迁移。
+              </div>
+            </div>
+            <div class="code-wrap">
+              <div class="code-label">Python · OpenAI SDK</div>
+              <pre><code>from openai import OpenAI
 client = OpenAI(api_key="your-api-key", base_url="https://api.apolloinn.site/standard/v1")
 response = client.chat.completions.create(
     model="claude-sonnet-4.6",
     messages=[{"role":"user","content":"你好！"}]
 )
 print(response.choices[0].message.content)</code></pre>
-        <button class="copy-btn" onclick="copyCode(this)">复制</button></div>
-      <div class="code-wrap"><div class="code-label">Python · 流式输出</div>
-<pre><code>from openai import OpenAI
+              <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            </div>
+            <div class="code-wrap">
+              <div class="code-label">Python · 流式输出</div>
+              <pre><code>from openai import OpenAI
 client = OpenAI(api_key="your-api-key", base_url="https://api.apolloinn.site/standard/v1")
 response = client.chat.completions.create(
     model="claude-sonnet-4.6",
@@ -823,31 +1800,46 @@ response = client.chat.completions.create(
 for chunk in response:
     c = chunk.choices[0].delta.content
     if c: print(c, end="", flush=True)</code></pre>
-        <button class="copy-btn" onclick="copyCode(this)">复制</button></div>
-      <div class="code-wrap"><div class="code-label">JavaScript · Node.js</div>
-<pre><code>import OpenAI from "openai";
+              <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            </div>
+            <div class="code-wrap">
+              <div class="code-label">JavaScript · Node.js</div>
+              <pre><code>import OpenAI from "openai";
 const client = new OpenAI({ apiKey:"your-api-key", baseURL:"https://api.apolloinn.site/standard/v1" });
 const response = await client.chat.completions.create({
   model: "claude-sonnet-4.6",
   messages: [{ role:"user", content:"Hello!" }]
 });
 console.log(response.choices[0].message.content);</code></pre>
-        <button class="copy-btn" onclick="copyCode(this)">复制</button></div>
-    </div>
-  </div>
+              <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            </div>
+          </div>
+        </div>
 
-  <div id="sub-s-anthropic" class="sub-panel">
-    <div class="card">
-      <div class="endpoint"><span class="tag tag-post">POST</span><span class="endpoint-path">/v1/messages</span></div>
-      <div class="alert alert-info" style="margin-bottom:14px"><span class="alert-icon">💡</span><div>原生 Anthropic Messages API 格式，适合已使用 Anthropic SDK 的项目直接迁移。</div></div>
-      <div class="code-wrap"><div class="code-label">cURL</div>
-<pre><code>curl -X POST https://api.apolloinn.site/v1/messages \
+        <div id="sub-s-anthropic" class="sub-panel">
+          <div class="card">
+            <div class="endpoint">
+              <span class="tag tag-post">POST</span
+              ><span class="endpoint-path">/v1/messages</span>
+            </div>
+            <div class="alert alert-info" style="margin-bottom: 14px">
+              <span class="alert-icon">💡</span>
+              <div>
+                原生 Anthropic Messages API 格式，适合已使用 Anthropic SDK
+                的项目直接迁移。
+              </div>
+            </div>
+            <div class="code-wrap">
+              <div class="code-label">cURL</div>
+              <pre><code>curl -X POST https://api.apolloinn.site/v1/messages \
   -H "Authorization: Bearer your-api-key" \
   -H "Content-Type: application/json" \
   -d '{"model":"claude-sonnet-4.6","max_tokens":1024,"messages":[{"role":"user","content":"你好！"}]}'</code></pre>
-        <button class="copy-btn" onclick="copyCode(this)">复制</button></div>
-      <div class="code-wrap"><div class="code-label">Python · Anthropic SDK</div>
-<pre><code>import anthropic
+              <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            </div>
+            <div class="code-wrap">
+              <div class="code-label">Python · Anthropic SDK</div>
+              <pre><code>import anthropic
 client = anthropic.Anthropic(api_key="your-api-key", base_url="https://api.apolloinn.site")
 msg = client.messages.create(
     model="claude-sonnet-4.6", max_tokens=1024,
@@ -855,9 +1847,11 @@ msg = client.messages.create(
     messages=[{"role":"user","content":"你好！"}]
 )
 print(msg.content[0].text)</code></pre>
-        <button class="copy-btn" onclick="copyCode(this)">复制</button></div>
-      <div class="code-wrap"><div class="code-label">Python · 流式</div>
-<pre><code>import anthropic
+              <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            </div>
+            <div class="code-wrap">
+              <div class="code-label">Python · 流式</div>
+              <pre><code>import anthropic
 client = anthropic.Anthropic(api_key="your-api-key", base_url="https://api.apolloinn.site")
 with client.messages.stream(
     model="claude-sonnet-4.6", max_tokens=1024,
@@ -865,110 +1859,348 @@ with client.messages.stream(
 ) as stream:
     for text in stream.text_stream:
         print(text, end="", flush=True)</code></pre>
-        <button class="copy-btn" onclick="copyCode(this)">复制</button></div>
-      <div class="code-wrap"><div class="code-label">JavaScript · Anthropic SDK</div>
-<pre><code>import Anthropic from "@anthropic-ai/sdk";
+              <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            </div>
+            <div class="code-wrap">
+              <div class="code-label">JavaScript · Anthropic SDK</div>
+              <pre><code>import Anthropic from "@anthropic-ai/sdk";
 const client = new Anthropic({ apiKey:"your-api-key", baseURL:"https://api.apolloinn.site" });
 const msg = await client.messages.create({
   model:"claude-sonnet-4.6", max_tokens:1024,
   messages:[{ role:"user", content:"Hello!" }]
 });
 console.log(msg.content[0].text);</code></pre>
-        <button class="copy-btn" onclick="copyCode(this)">复制</button></div>
-    </div>
-  </div>
-</div>
-
-<!-- ===== MODELS TAB ===== -->
-<div id="tab-models" class="tab-content">
-  <div class="card">
-    <div class="card-title"><span class="dot"></span>价格标准（每 1M tokens）</div>
-    <div class="price-grid">
-      <div class="price-card">
-        <div class="price-tier" style="color:#f59e0b">旗舰级 Opus</div>
-        <div class="price-model">Opus 4.6 / 4.5</div>
-        <div class="price-row"><span class="price-label">输入</span><span class="price-val">$5.00</span></div>
-        <div class="price-row"><span class="price-label">输出</span><span class="price-val">$25.00</span></div>
+              <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="price-card">
-        <div class="price-tier" style="color:#7c6af7">均衡级 Sonnet</div>
-        <div class="price-model">Sonnet 4.6 / 4.5 / 4</div>
-        <div class="price-row"><span class="price-label">输入</span><span class="price-val">$3.00</span></div>
-        <div class="price-row"><span class="price-label">输出</span><span class="price-val">$15.00</span></div>
+
+      <!-- ===== MODELS TAB ===== -->
+      <div id="tab-models" class="tab-content">
+        <div class="card">
+          <div class="card-title">
+            <span class="dot"></span>价格标准（每 1M tokens）
+          </div>
+          <div class="price-grid">
+            <div class="price-card">
+              <div class="price-tier" style="color: #f59e0b">旗舰级 Opus</div>
+              <div class="price-model">Opus 4.6 / 4.5</div>
+              <div class="price-row">
+                <span class="price-label">输入</span
+                ><span class="price-val">$5.00</span>
+              </div>
+              <div class="price-row">
+                <span class="price-label">输出</span
+                ><span class="price-val">$25.00</span>
+              </div>
+            </div>
+            <div class="price-card">
+              <div class="price-tier" style="color: #7c6af7">均衡级 Sonnet</div>
+              <div class="price-model">Sonnet 4.6 / 4.5 / 4</div>
+              <div class="price-row">
+                <span class="price-label">输入</span
+                ><span class="price-val">$3.00</span>
+              </div>
+              <div class="price-row">
+                <span class="price-label">输出</span
+                ><span class="price-val">$15.00</span>
+              </div>
+            </div>
+            <div class="price-card">
+              <div class="price-tier" style="color: #5eead4">快速级 Haiku</div>
+              <div class="price-model">Haiku 4.5</div>
+              <div class="price-row">
+                <span class="price-label">输入</span
+                ><span class="price-val">$1.00</span>
+              </div>
+              <div class="price-row">
+                <span class="price-label">输出</span
+                ><span class="price-val">$5.00</span>
+              </div>
+            </div>
+          </div>
+          <div class="alert alert-info" style="margin-top: 14px">
+            <span class="alert-icon">📊</span>
+            <div>
+              计费公式：费用 = 输入Token × 输入权重 + 输出Token × 输出权重，权重
+              = 模型价格 ÷ $25
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span class="dot"></span>完整模型列表（共 14 个）
+          </div>
+          <div class="alert alert-info" style="margin-bottom: 12px">
+            <span class="alert-icon">💡</span>
+            <div>
+              模型名称不区分大小写。<strong>Cursor</strong> 中填写 Kiro-
+              开头的别名；<strong>Cline / Continue / Codex / OpenCode</strong>
+              等工具两种名称均可使用。
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <tr>
+                <th>标准名称（其他工具可选）</th>
+                <th>Kiro 别名（Cursor 必用）</th>
+                <th>级别</th>
+              </tr>
+              <tr>
+                <td><code>Claude-Opus-4.6</code></td>
+                <td><code>Kiro-Opus-4-6</code></td>
+                <td>
+                  <span
+                    class="tag"
+                    style="
+                      background: rgba(245, 158, 11, 0.15);
+                      color: #fcd34d;
+                      border: 1px solid rgba(245, 158, 11, 0.3);
+                    "
+                    >旗舰</span
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td><code>Claude-Opus-4.5</code></td>
+                <td><code>Kiro-Opus-4-5</code></td>
+                <td>
+                  <span
+                    class="tag"
+                    style="
+                      background: rgba(245, 158, 11, 0.15);
+                      color: #fcd34d;
+                      border: 1px solid rgba(245, 158, 11, 0.3);
+                    "
+                    >旗舰</span
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td><code>Claude-Sonnet-4.6</code></td>
+                <td><code>Kiro-Sonnet-4-6</code></td>
+                <td>
+                  <span
+                    class="tag"
+                    style="
+                      background: rgba(124, 106, 247, 0.15);
+                      color: #a78bfa;
+                      border: 1px solid rgba(124, 106, 247, 0.3);
+                    "
+                    >均衡</span
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td><code>Claude-Sonnet-4.5</code></td>
+                <td><code>Kiro-Sonnet-4-5</code></td>
+                <td>
+                  <span
+                    class="tag"
+                    style="
+                      background: rgba(124, 106, 247, 0.15);
+                      color: #a78bfa;
+                      border: 1px solid rgba(124, 106, 247, 0.3);
+                    "
+                    >均衡</span
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td><code>Claude-Sonnet-4</code></td>
+                <td><code>Kiro-Sonnet-4</code></td>
+                <td>
+                  <span
+                    class="tag"
+                    style="
+                      background: rgba(124, 106, 247, 0.15);
+                      color: #a78bfa;
+                      border: 1px solid rgba(124, 106, 247, 0.3);
+                    "
+                    >均衡</span
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td><code>Claude-Haiku-4.5</code></td>
+                <td><code>Kiro-Haiku-4-5</code></td>
+                <td>
+                  <span
+                    class="tag"
+                    style="
+                      background: rgba(94, 234, 212, 0.15);
+                      color: #5eead4;
+                      border: 1px solid rgba(94, 234, 212, 0.3);
+                    "
+                    >快速</span
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td>—</td>
+                <td><code>Kiro-Haiku</code></td>
+                <td>
+                  <span
+                    class="tag"
+                    style="
+                      background: rgba(94, 234, 212, 0.15);
+                      color: #5eead4;
+                      border: 1px solid rgba(94, 234, 212, 0.3);
+                    "
+                    >快速</span
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td>—</td>
+                <td><code>Kiro-Auto</code></td>
+                <td><span class="tag tag-opt">自动</span></td>
+              </tr>
+            </table>
+          </div>
+          <div class="alert alert-warn" style="margin-top: 12px">
+            <span class="alert-icon">📋</span>
+            <div>
+              复制模型名填入 Cursor / Cline / ChatBox
+              等客户端即可使用。标准模型名和别名均可。
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span class="dot"></span>接口选择建议</div>
+          <div class="table-wrap">
+            <table>
+              <tr>
+                <th>使用场景</th>
+                <th>推荐接口</th>
+              </tr>
+              <tr>
+                <td>Cursor IDE 接入</td>
+                <td><code>POST /v1/chat/completions</code></td>
+              </tr>
+              <tr>
+                <td>自建应用（OpenAI SDK）</td>
+                <td><code>POST /standard/v1/chat/completions</code></td>
+              </tr>
+              <tr>
+                <td>需要获取思考过程</td>
+                <td>
+                  标准接口 + <code>reasoning_mode: "reasoning_content"</code>
+                </td>
+              </tr>
+              <tr>
+                <td>已有 Anthropic SDK 项目</td>
+                <td><code>POST /v1/messages</code></td>
+              </tr>
+              <tr>
+                <td>查询可用模型</td>
+                <td><code>GET /v1/models</code></td>
+              </tr>
+            </table>
+          </div>
+        </div>
       </div>
-      <div class="price-card">
-        <div class="price-tier" style="color:#5eead4">快速级 Haiku</div>
-        <div class="price-model">Haiku 4.5</div>
-        <div class="price-row"><span class="price-label">输入</span><span class="price-val">$1.00</span></div>
-        <div class="price-row"><span class="price-label">输出</span><span class="price-val">$5.00</span></div>
-      </div>
-    </div>
-    <div class="alert alert-info" style="margin-top:14px">
-      <span class="alert-icon">📊</span>
-      <div>计费公式：费用 = 输入Token × 输入权重 + 输出Token × 输出权重，权重 = 模型价格 ÷ $25</div>
-    </div>
-  </div>
 
-  <div class="card">
-    <div class="card-title"><span class="dot"></span>完整模型列表（共 14 个）</div>
-    <div class="alert alert-info" style="margin-bottom:12px">
-      <span class="alert-icon">💡</span>
-      <div>模型名称不区分大小写。<strong>Cursor</strong> 中填写 Kiro- 开头的别名；<strong>Cline / Continue / Codex / OpenCode</strong> 等工具两种名称均可使用。</div>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <tr><th>标准名称（其他工具可选）</th><th>Kiro 别名（Cursor 必用）</th><th>级别</th></tr>
-        <tr><td><code>Claude-Opus-4.6</code></td><td><code>Kiro-Opus-4-6</code></td><td><span class="tag" style="background:rgba(245,158,11,.15);color:#fcd34d;border:1px solid rgba(245,158,11,.3)">旗舰</span></td></tr>
-        <tr><td><code>Claude-Opus-4.5</code></td><td><code>Kiro-Opus-4-5</code></td><td><span class="tag" style="background:rgba(245,158,11,.15);color:#fcd34d;border:1px solid rgba(245,158,11,.3)">旗舰</span></td></tr>
-        <tr><td><code>Claude-Sonnet-4.6</code></td><td><code>Kiro-Sonnet-4-6</code></td><td><span class="tag" style="background:rgba(124,106,247,.15);color:#a78bfa;border:1px solid rgba(124,106,247,.3)">均衡</span></td></tr>
-        <tr><td><code>Claude-Sonnet-4.5</code></td><td><code>Kiro-Sonnet-4-5</code></td><td><span class="tag" style="background:rgba(124,106,247,.15);color:#a78bfa;border:1px solid rgba(124,106,247,.3)">均衡</span></td></tr>
-        <tr><td><code>Claude-Sonnet-4</code></td><td><code>Kiro-Sonnet-4</code></td><td><span class="tag" style="background:rgba(124,106,247,.15);color:#a78bfa;border:1px solid rgba(124,106,247,.3)">均衡</span></td></tr>
-        <tr><td><code>Claude-Haiku-4.5</code></td><td><code>Kiro-Haiku-4-5</code></td><td><span class="tag" style="background:rgba(94,234,212,.15);color:#5eead4;border:1px solid rgba(94,234,212,.3)">快速</span></td></tr>
-        <tr><td>—</td><td><code>Kiro-Haiku</code></td><td><span class="tag" style="background:rgba(94,234,212,.15);color:#5eead4;border:1px solid rgba(94,234,212,.3)">快速</span></td></tr>
-        <tr><td>—</td><td><code>Kiro-Auto</code></td><td><span class="tag tag-opt">自动</span></td></tr>
-      </table>
-    </div>
-    <div class="alert alert-warn" style="margin-top:12px">
-      <span class="alert-icon">📋</span>
-      <div>复制模型名填入 Cursor / Cline / ChatBox 等客户端即可使用。标准模型名和别名均可。</div>
-    </div>
-  </div>
+      <!-- ===== ERRORS TAB ===== -->
+      <div id="tab-errors" class="tab-content">
+        <div class="card">
+          <div class="card-title"><span class="dot"></span>HTTP 错误码</div>
+          <div class="table-wrap">
+            <table>
+              <tr>
+                <th>状态码</th>
+                <th>说明</th>
+                <th>处理建议</th>
+              </tr>
+              <tr>
+                <td>
+                  <span
+                    class="tag"
+                    style="
+                      background: rgba(239, 68, 68, 0.15);
+                      color: #fca5a5;
+                      border: 1px solid rgba(239, 68, 68, 0.3);
+                    "
+                    >401</span
+                  >
+                </td>
+                <td>API Key 无效或缺失</td>
+                <td>检查 Authorization Header 是否正确</td>
+              </tr>
+              <tr>
+                <td>
+                  <span
+                    class="tag"
+                    style="
+                      background: rgba(239, 68, 68, 0.15);
+                      color: #fca5a5;
+                      border: 1px solid rgba(239, 68, 68, 0.3);
+                    "
+                    >403</span
+                  >
+                </td>
+                <td>账户已禁用或无权限</td>
+                <td>联系管理员</td>
+              </tr>
+              <tr>
+                <td>
+                  <span
+                    class="tag"
+                    style="
+                      background: rgba(245, 158, 11, 0.15);
+                      color: #fcd34d;
+                      border: 1px solid rgba(245, 158, 11, 0.3);
+                    "
+                    >422</span
+                  >
+                </td>
+                <td>请求参数格式错误</td>
+                <td>检查请求体格式是否符合规范</td>
+              </tr>
+              <tr>
+                <td>
+                  <span
+                    class="tag"
+                    style="
+                      background: rgba(245, 158, 11, 0.15);
+                      color: #fcd34d;
+                      border: 1px solid rgba(245, 158, 11, 0.3);
+                    "
+                    >429</span
+                  >
+                </td>
+                <td>请求频率超限</td>
+                <td>降低请求频率，加入重试逻辑</td>
+              </tr>
+              <tr>
+                <td>
+                  <span
+                    class="tag"
+                    style="
+                      background: rgba(148, 163, 184, 0.15);
+                      color: #94a3b8;
+                      border: 1px solid rgba(148, 163, 184, 0.3);
+                    "
+                    >503</span
+                  >
+                </td>
+                <td>服务暂时不可用（无可用 token）</td>
+                <td>稍后重试</td>
+              </tr>
+            </table>
+          </div>
+        </div>
 
-  <div class="card">
-    <div class="card-title"><span class="dot"></span>接口选择建议</div>
-    <div class="table-wrap">
-      <table>
-        <tr><th>使用场景</th><th>推荐接口</th></tr>
-        <tr><td>Cursor IDE 接入</td><td><code>POST /v1/chat/completions</code></td></tr>
-        <tr><td>自建应用（OpenAI SDK）</td><td><code>POST /standard/v1/chat/completions</code></td></tr>
-        <tr><td>需要获取思考过程</td><td>标准接口 + <code>reasoning_mode: "reasoning_content"</code></td></tr>
-        <tr><td>已有 Anthropic SDK 项目</td><td><code>POST /v1/messages</code></td></tr>
-        <tr><td>查询可用模型</td><td><code>GET /v1/models</code></td></tr>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- ===== ERRORS TAB ===== -->
-<div id="tab-errors" class="tab-content">
-  <div class="card">
-    <div class="card-title"><span class="dot"></span>HTTP 错误码</div>
-    <div class="table-wrap">
-      <table>
-        <tr><th>状态码</th><th>说明</th><th>处理建议</th></tr>
-        <tr><td><span class="tag" style="background:rgba(239,68,68,.15);color:#fca5a5;border:1px solid rgba(239,68,68,.3)">401</span></td><td>API Key 无效或缺失</td><td>检查 Authorization Header 是否正确</td></tr>
-        <tr><td><span class="tag" style="background:rgba(239,68,68,.15);color:#fca5a5;border:1px solid rgba(239,68,68,.3)">403</span></td><td>账户已禁用或无权限</td><td>联系管理员</td></tr>
-        <tr><td><span class="tag" style="background:rgba(245,158,11,.15);color:#fcd34d;border:1px solid rgba(245,158,11,.3)">422</span></td><td>请求参数格式错误</td><td>检查请求体格式是否符合规范</td></tr>
-        <tr><td><span class="tag" style="background:rgba(245,158,11,.15);color:#fcd34d;border:1px solid rgba(245,158,11,.3)">429</span></td><td>请求频率超限</td><td>降低请求频率，加入重试逻辑</td></tr>
-        <tr><td><span class="tag" style="background:rgba(148,163,184,.15);color:#94a3b8;border:1px solid rgba(148,163,184,.3)">503</span></td><td>服务暂时不可用（无可用 token）</td><td>稍后重试</td></tr>
-      </table>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title"><span class="dot"></span>Python 错误处理 + 自动重试</div>
-    <div class="code-wrap"><div class="code-label">Python</div>
-<pre><code>import httpx, time
+        <div class="card">
+          <div class="card-title">
+            <span class="dot"></span>Python 错误处理 + 自动重试
+          </div>
+          <div class="code-wrap">
+            <div class="code-label">Python</div>
+            <pre><code>import httpx, time
 
 def chat_with_retry(messages, max_retries=3):
     for attempt in range(max_retries):
@@ -994,95 +2226,119 @@ def chat_with_retry(messages, max_retries=3):
             print(f"HTTP 错误: {e.response.status_code}")
             raise
     raise Exception("超过最大重试次数")</code></pre>
-      <button class="copy-btn" onclick="copyCode(this)">复制</button></div>
-  </div>
-</div>
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /container -->
 
-</div><!-- /container -->
-
-<script>
-// ╔══════════════════════════════════════════════╗
-// ║         全局配置 — 修改这里即可生效           ║
-// ║  QQ群链接、群名、充值价格 均在此处统一管理    ║
-// ╚══════════════════════════════════════════════╝
-const CONFIG = {
-  qq_group_link: 'https://qm.qq.com/q/HHJibYc96C',  // QQ群链接
-  qq_group_num:  'ApolloInn售后',                     // QQ群名称
-  prices: [                                           // 充值价格（cny=人民币, usd=美元额度）
-    { cny: '20元',  usd: '$250',  note: '' },
-    { cny: '50元',  usd: '$750',  note: '' },
-    { cny: '100元', usd: '$2000', note: '量大从优' },
-  ]
-};
-// ══════════════════════════════════════════════════
-</script>
-<script>
-function switchTab(name, btn) {
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
-  btn.classList.add('active');
-}
-function switchSub(name, btn) {
-  const parent = btn.closest('.tab-content');
-  parent.querySelectorAll('.sub-panel').forEach(el => el.classList.remove('active'));
-  parent.querySelectorAll('.sub-tab').forEach(el => el.classList.remove('active'));
-  parent.querySelector('#sub-' + name).classList.add('active');
-  btn.classList.add('active');
-}
-function copyCode(btn) {
-  const pre = btn.previousElementSibling;
-  const text = pre.innerText;
-  navigator.clipboard.writeText(text).then(() => {
-    btn.textContent = '已复制 ✓'; btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = '复制'; btn.classList.remove('copied'); }, 2000);
-  }).catch(() => {
-    const ta = document.createElement('textarea');
-    ta.value = text; document.body.appendChild(ta); ta.select();
-    document.execCommand('copy'); document.body.removeChild(ta);
-    btn.textContent = '已复制 ✓'; btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = '复制'; btn.classList.remove('copied'); }, 2000);
-  });
-}
-function toggleModels(titleEl) {
-  const list = document.getElementById('modelsList');
-  const arrow = document.getElementById('modelsArrow');
-  const open = list.style.display === 'none';
-  list.style.display = open ? 'block' : 'none';
-  arrow.textContent = open ? '▲ 收起' : '▼ 展开';
-}
-function closeModal(noMore) {
-  document.getElementById('welcomeModal').classList.add('hidden');
-  if (noMore) sessionStorage.setItem('apollo_welcome_seen', '1');
-}
-// 初始化弹窗内容
-(function initModal() {
-  const list = document.getElementById('priceList');
-  if (list) {
-    CONFIG.prices.forEach(p => {
-      list.innerHTML += `<div class="price-row-modal">
+    <script>
+      // ╔══════════════════════════════════════════════╗
+      // ║         全局配置 — 修改这里即可生效           ║
+      // ║  QQ群链接、群名、充值价格 均在此处统一管理    ║
+      // ╚══════════════════════════════════════════════╝
+      const CONFIG = {
+        qq_group_link: "https://qm.qq.com/q/HHJibYc96C", // QQ群链接
+        qq_group_num: "ApolloInn售后", // QQ群名称
+        prices: [
+          // 充值价格（cny=人民币, usd=美元额度）
+          { cny: "20元", usd: "$250", note: "" },
+          { cny: "50元", usd: "$750", note: "" },
+          { cny: "100元", usd: "$2000", note: "量大从优" },
+        ],
+      };
+      // ══════════════════════════════════════════════════
+    </script>
+    <script>
+      function switchTab(name, btn) {
+        document
+          .querySelectorAll(".tab-content")
+          .forEach((el) => el.classList.remove("active"));
+        document
+          .querySelectorAll(".nav-btn")
+          .forEach((el) => el.classList.remove("active"));
+        document.getElementById("tab-" + name).classList.add("active");
+        btn.classList.add("active");
+      }
+      function switchSub(name, btn) {
+        const parent = btn.closest(".tab-content");
+        parent
+          .querySelectorAll(".sub-panel")
+          .forEach((el) => el.classList.remove("active"));
+        parent
+          .querySelectorAll(".sub-tab")
+          .forEach((el) => el.classList.remove("active"));
+        parent.querySelector("#sub-" + name).classList.add("active");
+        btn.classList.add("active");
+      }
+      function copyCode(btn) {
+        const pre = btn.previousElementSibling;
+        const text = pre.innerText;
+        navigator.clipboard
+          .writeText(text)
+          .then(() => {
+            btn.textContent = "已复制 ✓";
+            btn.classList.add("copied");
+            setTimeout(() => {
+              btn.textContent = "复制";
+              btn.classList.remove("copied");
+            }, 2000);
+          })
+          .catch(() => {
+            const ta = document.createElement("textarea");
+            ta.value = text;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand("copy");
+            document.body.removeChild(ta);
+            btn.textContent = "已复制 ✓";
+            btn.classList.add("copied");
+            setTimeout(() => {
+              btn.textContent = "复制";
+              btn.classList.remove("copied");
+            }, 2000);
+          });
+      }
+      function toggleModels(titleEl) {
+        const list = document.getElementById("modelsList");
+        const arrow = document.getElementById("modelsArrow");
+        const open = list.style.display === "none";
+        list.style.display = open ? "block" : "none";
+        arrow.textContent = open ? "▲ 收起" : "▼ 展开";
+      }
+      function closeModal(noMore) {
+        document.getElementById("welcomeModal").classList.add("hidden");
+        if (noMore) sessionStorage.setItem("apollo_welcome_seen", "1");
+      }
+      // 初始化弹窗内容
+      (function initModal() {
+        const list = document.getElementById("priceList");
+        if (list) {
+          CONFIG.prices.forEach((p) => {
+            list.innerHTML += `<div class="price-row-modal">
         <span class="price-cny">${p.cny}</span>
         <span class="price-usd">${p.usd}</span>
-        ${p.note ? `<span class="price-note">${p.note}</span>` : ''}
+        ${p.note ? `<span class="price-note">${p.note}</span>` : ""}
       </div>`;
-    });
-  }
-  const qqLink = document.getElementById('qqLink');
-  if (qqLink) {
-    qqLink.href = CONFIG.qq_group_link;
-  }
-  const headerQQ = document.getElementById('headerQQLink');
-  if (headerQQ) {
-    headerQQ.href = CONFIG.qq_group_link;
-  }
-  const headerQQName = document.getElementById('headerQQName');
-  if (headerQQName) {
-    headerQQName.textContent = CONFIG.qq_group_num;
-  }
-  if (!sessionStorage.getItem('apollo_welcome_seen')) {
-    document.getElementById('welcomeModal').classList.remove('hidden');
-  }
-})();
-</script>
-</body>
+          });
+        }
+        const qqLink = document.getElementById("qqLink");
+        if (qqLink) {
+          qqLink.href = CONFIG.qq_group_link;
+        }
+        const headerQQ = document.getElementById("headerQQLink");
+        if (headerQQ) {
+          headerQQ.href = CONFIG.qq_group_link;
+        }
+        const headerQQName = document.getElementById("headerQQName");
+        if (headerQQName) {
+          headerQQName.textContent = CONFIG.qq_group_num;
+        }
+        if (!sessionStorage.getItem("apollo_welcome_seen")) {
+          document.getElementById("welcomeModal").classList.remove("hidden");
+        }
+      })();
+    </script>
+  </body>
 </html>
