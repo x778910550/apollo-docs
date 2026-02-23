@@ -705,7 +705,7 @@
             margin-top: 6px;
           "
         >
-          <p style="margin: 0">Claude API 反向代理 · 完整使用文档</p>
+          <p style="margin: 0">Claude API 反向代理 · 完整使用文档 · 美东 / 美西 / 日本 三节点</p>
           <a
             id="headerQQLink"
             href="#"
@@ -804,6 +804,9 @@
           </button>
           <button class="nav-btn" onclick="switchTab('opencode', this)">
             <span class="icon">💻</span>OpenCode
+          </button>
+          <button class="nav-btn" onclick="switchTab('claudecode', this)">
+            <span class="icon">🔷</span>Claude Code
           </button>
           <button class="nav-btn" onclick="switchTab('api', this)">
             <span class="icon">🔌</span>API 接入
@@ -1389,14 +1392,33 @@ models:
               <div class="step-body">
                 <div class="step-title">创建配置文件</div>
                 <div class="step-desc">
-                  在 <code>~/.codex/config.yaml</code> 中写入以下配置：
+                  在 <code>~/.codex/config.toml</code> 中写入以下配置：
                 </div>
                 <div class="code-wrap" style="margin-top: 8px">
-                  <div class="code-label">~/.codex/config.yaml</div>
-                  <pre><code>model: claude-sonnet-4.6
-provider: openai
-apiKey: ap-你的apikey
-apiBase: https://api.apolloinn.site/standard/v1</code></pre>
+                  <div class="code-label">~/.codex/config.toml</div>
+                  <pre><code>model = "apollo/claude-sonnet-4.6"
+
+[model_providers.apollo]
+name = "Apollo Gateway"
+base_url = "https://api.apolloinn.site/standard/v1"
+env_key = "APOLLO_API_KEY"
+wire_api = "chat"</code></pre>
+                  <button class="copy-btn" onclick="copyCode(this)">
+                    复制
+                  </button>
+                </div>
+                <div class="code-wrap">
+                  <div class="code-label">一键创建（bash / zsh）</div>
+                  <pre><code>mkdir -p ~/.codex
+cat > ~/.codex/config.toml << 'EOF'
+model = "apollo/claude-sonnet-4.6"
+
+[model_providers.apollo]
+name = "Apollo Gateway"
+base_url = "https://api.apolloinn.site/standard/v1"
+env_key = "APOLLO_API_KEY"
+wire_api = "chat"
+EOF</code></pre>
                   <button class="copy-btn" onclick="copyCode(this)">
                     复制
                   </button>
@@ -1406,22 +1428,30 @@ apiBase: https://api.apolloinn.site/standard/v1</code></pre>
             <div class="step">
               <div class="step-num">3</div>
               <div class="step-body">
-                <div class="step-title">或使用环境变量</div>
+                <div class="step-title">设置 API Key 环境变量</div>
+                <div class="step-desc">
+                  配置文件中 <code>env_key</code> 指定了从哪个环境变量读取 Key，需要设置对应变量：
+                </div>
                 <div class="code-wrap" style="margin-top: 8px">
-                  <div class="code-label">bash / zsh</div>
-                  <pre><code>export OPENAI_API_KEY="ap-你的apikey"
-export OPENAI_BASE_URL="https://api.apolloinn.site/standard/v1"</code></pre>
+                  <div class="code-label">bash / zsh（写入 shell 配置持久化）</div>
+                  <pre><code>echo 'export APOLLO_API_KEY="ap-你的apikey"' >> ~/.zshrc
+source ~/.zshrc</code></pre>
                   <button class="copy-btn" onclick="copyCode(this)">
                     复制
                   </button>
                 </div>
                 <div class="code-wrap">
-                  <div class="code-label">Windows PowerShell</div>
-                  <pre><code>$env:OPENAI_API_KEY="ap-你的apikey"
-$env:OPENAI_BASE_URL="https://api.apolloinn.site/standard/v1"</code></pre>
+                  <div class="code-label">Windows PowerShell（当前会话）</div>
+                  <pre><code>$env:APOLLO_API_KEY="ap-你的apikey"</code></pre>
                   <button class="copy-btn" onclick="copyCode(this)">
                     复制
                   </button>
+                </div>
+                <div class="alert alert-warn" style="margin-top: 8px">
+                  <span class="alert-icon">⚠️</span>
+                  <div>
+                    bash 用户请将 <code>~/.zshrc</code> 替换为 <code>~/.bashrc</code>。Windows 用户如需持久化，可通过系统环境变量设置。
+                  </div>
                 </div>
               </div>
             </div>
@@ -1431,14 +1461,17 @@ $env:OPENAI_BASE_URL="https://api.apolloinn.site/standard/v1"</code></pre>
                 <div class="step-title">启动 Codex</div>
                 <div class="code-wrap" style="margin-top: 8px">
                   <div class="code-label">命令行</div>
-                  <pre><code># 指定模型启动
-codex --model claude-sonnet-4.6
-
-# 或直接启动（使用配置文件中的默认模型）
+                  <pre><code>cd ~/your-project
 codex</code></pre>
                   <button class="copy-btn" onclick="copyCode(this)">
                     复制
                   </button>
+                </div>
+                <div class="alert alert-info" style="margin-top: 8px">
+                  <span class="alert-icon">💡</span>
+                  <div>
+                    也可以临时指定模型：<code>codex --model apollo/claude-opus-4.6</code>，模型名格式为 <code>提供商名/模型名</code>。
+                  </div>
                 </div>
               </div>
             </div>
@@ -1453,16 +1486,24 @@ codex</code></pre>
                 <th>值</th>
               </tr>
               <tr>
-                <td>apiBase / OPENAI_BASE_URL</td>
+                <td>配置文件</td>
+                <td><code>~/.codex/config.toml</code></td>
+              </tr>
+              <tr>
+                <td>base_url</td>
                 <td><code>https://api.apolloinn.site/standard/v1</code></td>
               </tr>
               <tr>
-                <td>apiKey / OPENAI_API_KEY</td>
-                <td><code>ap-xxx（你的 Key）</code></td>
+                <td>env_key 环境变量</td>
+                <td><code>APOLLO_API_KEY=ap-xxx</code></td>
               </tr>
               <tr>
-                <td>推荐模型</td>
-                <td><code>claude-sonnet-4.6</code></td>
+                <td>wire_api</td>
+                <td><code>chat</code>（OpenAI Chat 协议）</td>
+              </tr>
+              <tr>
+                <td>模型格式</td>
+                <td><code>apollo/模型名</code>（如 <code>apollo/claude-sonnet-4.6</code>）</td>
               </tr>
             </table>
           </div>
@@ -1572,8 +1613,253 @@ export OPENAI_BASE_URL="https://api.apolloinn.site/standard/v1"</code></pre>
         </div>
       </div>
 
+      <!-- ===== CLAUDE CODE TAB ===== -->
+      <div id="tab-claudecode" class="tab-content">
+        <div class="alert alert-warn">
+          <span class="alert-icon">⚠️</span>
+          <div>需要魔法（代理）才能正常访问。建议开启系统代理。</div>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            <span class="dot"></span>配置步骤（Claude Code CLI）
+          </div>
+          <div class="steps">
+            <div class="step">
+              <div class="step-num">1</div>
+              <div class="step-body">
+                <div class="step-title">安装 Claude Code</div>
+                <div class="code-wrap" style="margin-top: 8px">
+                  <div class="code-label">npm</div>
+                  <pre><code>npm install -g @anthropic-ai/claude-code</code></pre>
+                  <button class="copy-btn" onclick="copyCode(this)">
+                    复制
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">2</div>
+              <div class="step-body">
+                <div class="step-title">配置连接（持久化）</div>
+                <div class="step-desc">
+                  创建 <code>~/.claude/settings.json</code>，写入以下内容：
+                </div>
+                <div class="code-wrap" style="margin-top: 8px">
+                  <div class="code-label">~/.claude/settings.json</div>
+                  <pre><code>{
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "ap-你的apikey",
+    "ANTHROPIC_BASE_URL": "https://api.apolloinn.site",
+    "ANTHROPIC_MODEL": "claude-opus-4.6",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "claude-opus-4.6",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-4.6",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-opus-4.6"
+  }
+}</code></pre>
+                  <button class="copy-btn" onclick="copyCode(this)">
+                    复制
+                  </button>
+                </div>
+                <div class="code-wrap">
+                  <div class="code-label">一键创建（bash / zsh）</div>
+                  <pre><code>mkdir -p ~/.claude
+cat > ~/.claude/settings.json << 'EOF'
+{
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "ap-你的apikey",
+    "ANTHROPIC_BASE_URL": "https://api.apolloinn.site",
+    "ANTHROPIC_MODEL": "claude-opus-4.6",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "claude-opus-4.6",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-4.6",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-opus-4.6"
+  }
+}
+EOF</code></pre>
+                  <button class="copy-btn" onclick="copyCode(this)">
+                    复制
+                  </button>
+                </div>
+                <div class="alert alert-info" style="margin-top: 8px">
+                  <span class="alert-icon">💡</span>
+                  <div>
+                    模型可按需替换，如 <code>claude-sonnet-4.6</code>、<code>claude-haiku-4.5</code> 等。
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">3</div>
+              <div class="step-body">
+                <div class="step-title">跳过官方登录</div>
+                <div class="step-desc">
+                  创建占位凭证文件，并设置空的 API Key 环境变量以绕过官方登录流程：
+                </div>
+                <div class="code-wrap" style="margin-top: 8px">
+                  <div class="code-label">bash / zsh</div>
+                  <pre><code>cat > ~/.claude/.credentials.json << 'EOF'
+{"apiKeyHelper":{"apiKey":"sk-placeholder"}}
+EOF
+echo 'export ANTHROPIC_API_KEY=""' >> ~/.zshrc
+source ~/.zshrc</code></pre>
+                  <button class="copy-btn" onclick="copyCode(this)">
+                    复制
+                  </button>
+                </div>
+                <div class="alert alert-warn" style="margin-top: 8px">
+                  <span class="alert-icon">⚠️</span>
+                  <div>
+                    如果使用 bash 而非 zsh，请将 <code>~/.zshrc</code> 替换为 <code>~/.bashrc</code>。
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">4</div>
+              <div class="step-body">
+                <div class="step-title">跳过 Onboarding 引导</div>
+                <div class="step-desc">
+                  首次运行以下命令完成初始化，之后就不会再出现引导流程：
+                </div>
+                <div class="code-wrap" style="margin-top: 8px">
+                  <div class="code-label">命令行</div>
+                  <pre><code>ANTHROPIC_API_KEY="" claude -p "hello"</code></pre>
+                  <button class="copy-btn" onclick="copyCode(this)">
+                    复制
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">5</div>
+              <div class="step-body">
+                <div class="step-title">后续启动</div>
+                <div class="step-desc">
+                  进入项目目录后启动 Claude Code：
+                </div>
+                <div class="code-wrap" style="margin-top: 8px">
+                  <div class="code-label">命令行</div>
+                  <pre><code>cd ~/your-project
+ANTHROPIC_API_KEY="" claude</code></pre>
+                  <button class="copy-btn" onclick="copyCode(this)">
+                    复制
+                  </button>
+                </div>
+                <div class="alert alert-info" style="margin-top: 8px">
+                  <span class="alert-icon">💡</span>
+                  <div>
+                    第一次进交互模式会询问是否信任当前目录，选 yes 即可，之后同一目录不会再问。
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><span class="dot"></span>配置参数速查</div>
+          <div class="table-wrap">
+            <table>
+              <tr>
+                <th>配置项</th>
+                <th>值</th>
+              </tr>
+              <tr>
+                <td>ANTHROPIC_BASE_URL</td>
+                <td><code>https://api.apolloinn.site</code></td>
+              </tr>
+              <tr>
+                <td>ANTHROPIC_AUTH_TOKEN</td>
+                <td><code>ap-xxx（你的 Key）</code></td>
+              </tr>
+              <tr>
+                <td>配置文件</td>
+                <td><code>~/.claude/settings.json</code></td>
+              </tr>
+              <tr>
+                <td>凭证文件</td>
+                <td><code>~/.claude/.credentials.json</code></td>
+              </tr>
+              <tr>
+                <td>推荐模型</td>
+                <td><code>claude-opus-4.6</code>（可按需更换）</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <div class="alert alert-info">
+          <span class="alert-icon">💡</span>
+          <div>
+            Claude Code 使用 Anthropic 原生协议，Base URL 为
+            <code>https://api.apolloinn.site</code>（不带 /v1）。也可替换为美西
+            <code>api2.apolloinn.site</code> 或日本
+            <code>api3.apolloinn.site</code>。
+          </div>
+        </div>
+      </div>
+
       <!-- ===== API TAB ===== -->
       <div id="tab-api" class="tab-content">
+        <div class="card" style="margin-bottom: 16px">
+          <div class="card-title"><span class="dot"></span>服务器节点</div>
+          <div class="table-wrap">
+            <table>
+              <tr>
+                <th>节点</th>
+                <th>地址</th>
+              </tr>
+              <tr>
+                <td>美东（默认）</td>
+                <td><code>https://api.apolloinn.site</code></td>
+              </tr>
+              <tr>
+                <td>美西</td>
+                <td><code>https://api2.apolloinn.site</code></td>
+              </tr>
+              <tr>
+                <td>日本</td>
+                <td><code>https://api3.apolloinn.site</code></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 16px">
+          <div class="card-title"><span class="dot"></span>三种接入路径</div>
+          <div class="table-wrap">
+            <table>
+              <tr>
+                <th>路径</th>
+                <th>Base URL</th>
+                <th>协议</th>
+                <th>适用场景</th>
+              </tr>
+              <tr>
+                <td>Cursor 专用</td>
+                <td><code>/v1</code></td>
+                <td>OpenAI</td>
+                <td>Cursor IDE，自动处理 thinking 标签、重试、保活</td>
+              </tr>
+              <tr>
+                <td>标准 OpenAI</td>
+                <td><code>/standard/v1</code></td>
+                <td>OpenAI</td>
+                <td>通用 OpenAI 兼容客户端（Cline、ChatBox、LobeChat 等）</td>
+              </tr>
+              <tr>
+                <td>Anthropic 原生</td>
+                <td><code>不带路径后缀</code></td>
+                <td>Anthropic</td>
+                <td>Anthropic SDK 客户端（Claude Code CLI 等）</td>
+              </tr>
+            </table>
+          </div>
+          <div class="alert alert-info" style="margin-top: 10px">
+            <span class="alert-icon">💡</span>
+            <div>
+              认证方式：OpenAI 协议使用 <code>Authorization: Bearer &lt;key&gt;</code>；Anthropic 协议使用 <code>x-api-key: &lt;key&gt;</code>。
+            </div>
+          </div>
+        </div>
+
         <div class="sub-tabs">
           <button class="sub-tab active" onclick="switchSub('s-models', this)">
             GET 模型列表
@@ -1705,6 +1991,34 @@ if resp.choices[0].message.tool_calls:
                 </tr>
               </table>
             </div>
+            <div class="card-title" style="font-size: 14px; margin-top: 16px">
+              <span class="dot" style="background: var(--accent2)"></span>context_compression 参数
+            </div>
+            <p class="step-desc" style="margin-bottom: 10px">
+              控制是否对消息上下文进行自动压缩：
+            </p>
+            <div class="table-wrap" style="margin-bottom: 16px">
+              <table>
+                <tr>
+                  <th>context_compression</th>
+                  <th>行为</th>
+                </tr>
+                <tr>
+                  <td><code>true</code></td>
+                  <td>默认。当消息总 token 数接近模型上下文窗口时，自动压缩早期消息以避免超限</td>
+                </tr>
+                <tr>
+                  <td><code>false</code></td>
+                  <td>关闭压缩，消息原样透传。适合客户端自行管理上下文长度的场景</td>
+                </tr>
+              </table>
+            </div>
+            <div class="alert alert-warn" style="margin-bottom: 14px">
+              <span class="alert-icon">⚠️</span>
+              <div>
+                关闭压缩后，如果消息总长度超过模型上下文窗口，请求可能会失败。请确保客户端自行控制上下文长度。
+              </div>
+            </div>
             <div class="code-wrap">
               <div class="code-label">cURL</div>
               <pre><code>curl -X POST https://api.apolloinn.site/standard/v1/chat/completions \
@@ -1826,8 +2140,36 @@ console.log(response.choices[0].message.content);</code></pre>
               <span class="alert-icon">💡</span>
               <div>
                 原生 Anthropic Messages API 格式，适合已使用 Anthropic SDK
-                的项目直接迁移。
+                的项目直接迁移。支持 thinking block、图片、工具调用。认证使用
+                <code>x-api-key</code> 或 <code>Authorization: Bearer</code>。
               </div>
+            </div>
+            <div class="card-title" style="font-size: 14px; margin-top: 16px">
+              <span class="dot" style="background: var(--accent2)"></span>特性说明
+            </div>
+            <div class="table-wrap" style="margin-bottom: 16px">
+              <table>
+                <tr>
+                  <th>特性</th>
+                  <th>说明</th>
+                </tr>
+                <tr>
+                  <td>Thinking</td>
+                  <td>模型推理过程通过原生 <code>thinking</code> content block 返回，客户端可自行折叠/展示</td>
+                </tr>
+                <tr>
+                  <td>图片</td>
+                  <td>支持 base64 格式的 <code>image</code> content block，压缩路径中完整保留</td>
+                </tr>
+                <tr>
+                  <td>工具调用</td>
+                  <td>支持 Anthropic 原生 <code>tool_use</code> / <code>tool_result</code> 格式</td>
+                </tr>
+                <tr>
+                  <td>上下文压缩</td>
+                  <td>始终开启，长对话自动压缩</td>
+                </tr>
+              </table>
             </div>
             <div class="code-wrap">
               <div class="code-label">cURL</div>
@@ -1870,6 +2212,40 @@ const msg = await client.messages.create({
   messages:[{ role:"user", content:"Hello!" }]
 });
 console.log(msg.content[0].text);</code></pre>
+              <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            </div>
+            <hr class="divider" />
+            <div class="card-title" style="font-size: 14px">
+              <span class="dot" style="background: var(--accent2)"></span>流式响应格式（Anthropic SSE）
+            </div>
+            <div class="code-wrap">
+              <div class="code-label">SSE 事件流</div>
+              <pre><code>event: message_start
+data: {"type":"message_start","message":{"id":"msg_xxx","type":"message","role":"assistant","model":"claude-sonnet-4-20250514",...}}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"Let me think..."}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Hello!"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"stop_reason":"end_turn"},"usage":{"output_tokens":50}}
+
+event: message_stop
+data: {"type":"message_stop"}</code></pre>
               <button class="copy-btn" onclick="copyCode(this)">复制</button>
             </div>
           </div>
@@ -2142,7 +2518,7 @@ console.log(msg.content[0].text);</code></pre>
                     >403</span
                   >
                 </td>
-                <td>账户已禁用或无权限</td>
+                <td>账户已禁用或额度不足</td>
                 <td>联系管理员</td>
               </tr>
               <tr>
